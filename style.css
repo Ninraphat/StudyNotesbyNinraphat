@@ -397,7 +397,7 @@
 @media (max-width:640px){
   .gallery-grid{ columns: 2 140px; }
 }
-
+grid-template-columns: 1fr; /* บังคับให้แสดงแค่แถวละ 1 รูป ภาพจะใหญ่เต็มจอ */
 /* ---------- Grades page ---------- */
 .grades-wrap{
   max-width:640px;
