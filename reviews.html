@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>รีวิวลูกค้า — Study notes by Ninraphat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="stamp">🌙</div>
+  <img src="logo.png" alt="Study notes by Ninraphat" class="logo-mark">
+  <div class="eyebrow">ENG · Ramkhamhaeng</div>
+  <h1>รีวิวจากลูกค้า</h1>
+  <p>ตัวอย่างคำชมจากคนที่เคยซื้อชีทไปแล้วค่ะ 💬</p>
+</header>
+<nav class="topnav">
+  <a href="index.html">🏠 หน้าแรก</a>
+  <a href="reviews.html" class="active">💬 รีวิวลูกค้า</a>
+  <a href="grades.html">🎓 ผลการเรียน</a>
+</nav>
+
+<div class="gallery-wrap">
+  <p class="gallery-intro">
+    ทุกรีวิวมาจากลูกค้าจริงที่ทักไลน์เข้ามาซื้อชีทค่ะ 🙏 ถ้าใช้แล้วชอบ ทักรีวิวมาได้เลยนะคะ จะเอามาลงเพิ่มให้ค่ะ
+  </p>
+
+  <!-- ============================================================
+       ใส่รูปรีวิวจริงตรงนี้ (11 รูปจาก Notion เดิม)
+       วิธีเอารูปมาใส่:
+       1) เปิดหน้า Notion "ชีทสรุป by Ninraphat" > ส่วน Review 💬
+       2) คลิกขวาที่แต่ละรูป > Save image as... (หรือ "บันทึกรูปภาพเป็น")
+       3) ตั้งชื่อไฟล์ review-01.jpg, review-02.jpg, ... เรียงตามลำดับ
+       4) วางไฟล์ทั้งหมดไว้โฟลเดอร์เดียวกับ index.html / reviews.html
+       ============================================================ -->
+  <div class="gallery-grid" id="galleryGrid">
+    <img src="review-01.jpg" alt="รีวิวลูกค้า 1" loading="lazy" onerror="this.parentElement.querySelector ? null : null">
+    <img src="review-02.jpg" alt="รีวิวลูกค้า 2" loading="lazy">
+    <img src="review-03.jpg" alt="รีวิวลูกค้า 3" loading="lazy">
+    <img src="review-04.jpg" alt="รีวิวลูกค้า 4" loading="lazy">
+    <img src="review-05.jpg" alt="รีวิวลูกค้า 5" loading="lazy">
+    <img src="review-06.jpg" alt="รีวิวลูกค้า 6" loading="lazy">
+    <img src="review-07.jpg" alt="รีวิวลูกค้า 7" loading="lazy">
+    <img src="review-08.jpg" alt="รีวิวลูกค้า 8" loading="lazy">
+    <img src="review-09.jpg" alt="รีวิวลูกค้า 9" loading="lazy">
+    <img src="review-10.jpg" alt="รีวิวลูกค้า 10" loading="lazy">
+    <img src="review-11.jpg" alt="รีวิวลูกค้า 11" loading="lazy">
+  </div>
+</div>
+
+<img src="mascot-dino.png" alt="" class="mascot-dino">
+<footer>สนใจสั่งซื้อชีท ทักไลน์ได้เลยค่ะ 💬</footer>
+
+<script>
+// ซ่อนกรอบรูปที่ยังไม่มีไฟล์จริง (กันไอคอนรูปแตกโชว์ตอนยังไม่ได้ใส่รูป)
+document.querySelectorAll('#galleryGrid img').forEach(img => {
+  img.addEventListener('error', () => { img.style.display = 'none'; });
+});
+</script>
+
+</body>
+</html>

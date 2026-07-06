@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study notes by Ninraphat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="stamp">🌙</div>
+  <img src="logo.png" alt="Study notes by Ninraphat" class="logo-mark">
+  <div class="eyebrow">ENG · Ramkhamhaeng</div>
+  <h1>ชีทสรุป by Ninraphat</h1>
+  <p>เลือกวิชา ใส่ตะกร้า สแกนจ่าย รับลิงก์ทันที</p>
+</header>
+<nav class="topnav">
+  <a href="index.html" class="active">🏠 หน้าแรก</a>
+  <a href="reviews.html">💬 รีวิวลูกค้า</a>
+  <a href="grades.html">🎓 ผลการเรียน</a>
+</nav>
+
+<main>
+  <section class="card-list" id="subjectList"></section>
+
+  <aside class="receipt">
+    <h2>ใบสั่งซื้อ</h2>
+    <div class="sub">— RECEIPT —</div>
+    <div class="receipt-items" id="receiptItems">
+      <div class="receipt-empty">ยังไม่ได้เลือกชีท</div>
+    </div>
+    <div class="receipt-total">
+      <span>รวมทั้งหมด</span>
+      <span class="num"><span id="totalAmount">0</span> ฿</span>
+    </div>
+
+    <button class="btn btn-pay" id="payBtn" disabled>ชำระเงิน</button>
+
+    <div class="qr-block" id="qrBlock">
+      <div class="order-id-tag">เลขออเดอร์ <b id="orderIdDisplay">-</b></div>
+      <img src="qr-placeholder.png" alt="QR โอนเงิน" id="qrImg">
+      <div class="bank-fallback" id="bankFallback"></div>
+      <div class="amount-tag">โอน <span id="qrAmount">0</span> บาท</div>
+      <div class="hint">1) สแกน QR โอนตามยอด<br>2) กดปุ่มด้านล่างเพื่อเปิดแชท LINE (มีเลขออเดอร์ใส่ให้แล้ว)<br>3) แนบรูปสลิปส่งในแชทนั้น แล้วรอแอดมินยืนยัน</div>
+      <a class="btn btn-confirm" id="lineBtn" target="_blank" rel="noopener">แจ้งชำระเงินทาง LINE OA</a>
+    </div>
+
+    <div class="downloads" id="downloads">
+      <h3>✓ แจ้งเรียบร้อย</h3>
+      <p style="font-size:13px;color:var(--ink-soft);text-align:center;line-height:1.6;">
+        ส่งสลิปในแชท LINE แล้วรอแอดมินตรวจสอบ<br>
+        เมื่ออนุมัติแล้ว ลิงก์ไฟล์จะถูกส่งเข้าแชท LINE ให้อัตโนมัติ
+      </p>
+    </div>
+  </aside>
+</main>
+
+<img src="mascot-dino.png" alt="" class="mascot-dino">
+<footer>หากลิงก์ใช้ไม่ได้ กรุณาแคปหน้าจอสลิปแล้วติดต่อทาง LINE</footer>
+
+<script>
+/* ------------------------------------------------------------------
+   CONFIG — แก้ตรงนี้ที่เดียวพอ
+   1) qrImageSrc: เปลี่ยน "qr-placeholder.png" เป็นไฟล์รูป QR จริงของคุณ
+      (วางไฟล์รูปไว้โฟลเดอร์เดียวกับ index.html แล้วใส่ชื่อไฟล์ตรงนี้)
+   2) driveLink: ใส่ลิงก์ Google Drive ของแต่ละวิชา (และลิงก์ข้อสอบเสริม)
+------------------------------------------------------------------- */
+const CONFIG = {
+  qrImageSrc: "qr-placeholder.png",
+  // จากเว็บเดิม: ติดต่อสั่งซื้อทาง LINE OA
+  lineAddFriendUrl: "https://lin.ee/oUusMog",
+  // ใส่ LINE ID ของ OA (เช่น @abc1234, ดูได้ใน LINE OA Manager > Settings) เพื่อให้เปิดแชทพร้อมข้อความเลขออเดอร์อัตโนมัติ
+  // ถ้ายังไม่ใส่ ปุ่มจะพาไปที่ลิงก์ Add Friend ด้านบนแทน (ไม่มีข้อความ prefill)
+  lineOaId: "",
+  bankInfo: "SCB ไทยพาณิชย์ 232-2-24173-2\nศิรภัทร์ ชุมสาย ณ อยุธยา",
+  subjects: [
+    {
+      code:"ENG2001", price:29,
+      desc:"สรุปเนื้อหาทฤษฎีเทคนิคต่างๆ + คำแปลบทความและไฮไลท์ศัพท์ Seen Passage ที่จะออกสอบ + ตัวอย่างและแบบฝึกหัดที่อาจารย์ให้ทำทั้งหมด",
+      previewLink:"https://drive.google.com/file/d/1UkOVLTG5SW_FugC0UhmWMNXrBt3ywsfg/view?usp=sharing",
+      driveLink:"https://drive.google.com/FILE_ID_ENG2001",
+      addon:false
+    },
+    {
+      code:"ENG2002", price:29,
+      desc:"สรุปเนื้อหาและเทคนิคการอ่านตีความ 5 บท + คำแปลและเฉลยแบบฝึกหัดจาก Seen Passage ที่จะออกสอบทุกบทของเทอมนี้",
+      previewLink:"https://drive.google.com/file/d/1_u2dksug7DxIl63vGPt9DpmT2qmByn0H/view?usp=sharing",
+      driveLink:"https://drive.google.com/FILE_ID_ENG2002",
+      addon:true, addonPrice:10, addonLabel:"รับ Flashcard Quizlet (คำศัพท์ Seen Passage + Oxford 3000 B1)",
+      addonLink:"https://drive.google.com/FILE_ID_ENG2002_FLASHCARD"
+    },
+    {
+      code:"ENG2101", price:29,
+      desc:"สรุปจากหนังสือ เน้นสิ่งที่อาจารย์สอน ท้ายคาบอาจารย์มักมีโจทย์ให้ฝึก รวบรวมพร้อมคำตอบไว้ท้ายสรุป",
+      previewLink:"https://drive.google.com/file/d/1X7w3gIjutSjAWAsW60XYxQCxAqmxC4Kr/view?usp=sharing",
+      driveLink:"https://drive.google.com/FILE_ID_ENG2101",
+      addon:true, addonPrice:10, addonLabel:"รับแนวข้อสอบเพิ่มเติม",
+      addonLink:"https://drive.google.com/FILE_ID_ENG2101_EXAM"
+    },
+    {
+      code:"ENG2102", price:29,
+      desc:"แนวข้อสอบที่อาจารย์ให้ทำพร้อมเฉลยและอธิบายข้อถูก + pre-test ก่อนเรียน + แนวข้อเขียนพร้อมตัวอย่าง + Grammar ที่ใช้สอบ",
+      previewLink:"https://drive.google.com/file/d/1as-8OteWZjSwpe7wpbzAeooTSYxJydBD/view?usp=sharing",
+      driveLink:"https://drive.google.com/FILE_ID_ENG2102",
+      addon:false
+    },
+    {
+      code:"ENL2001", price:29,
+      desc:"เนื้อหาสไลด์อาจารย์ + สรุปจากหนังสือเพิ่มเติม อาจารย์เน้นออกสอบตามสไลด์ เหมาะกับคนไม่ได้เข้าเรียนหรือไม่มีเวลา",
+      previewLink:"https://drive.google.com/file/d/1VhwAAnzJ2vy1sifn9FuQEX7gXQa0_gG6/view?usp=sharing",
+      driveLink:"https://drive.google.com/FILE_ID_ENL2001",
+      addon:false
+    },
+    {
+      code:"ENG2401", price:29,
+      desc:"สรุปเนื้อหาบทที่ 1-9 + แนวและเทคนิคการทำข้อสอบอัตนัย 4 พาร์ท",
+      previewLink:"https://drive.google.com/file/d/1f75zbwHli59xlIXCM-VsStEfG-_Ddmme/view?usp=sharing",
+      driveLink:"https://drive.google.com/FILE_ID_ENG2401",
+      addon:true, addonPrice:10, addonLabel:"รับแนวข้อสอบ 3 ชุดฝึกทำจริง พร้อมเฉลย อธิบาย แปลทุกข้อ",
+      addonLink:"https://drive.google.com/FILE_ID_ENG2401_EXAM"
+    },
+    {
+      code:"ENG2601", price:29,
+      desc:"สรุปเนื้อหาจากหนังสือ + เอกสารเพิ่มเติมจากอาจารย์ + บทแปลกลอนที่อาจารย์สอน",
+      previewLink:"https://drive.google.com/file/d/1hMmfIdhV1tAGRbY7q3j2G0LAR1iuQayI/view?usp=sharing",
+      driveLink:"https://drive.google.com/FILE_ID_ENG2601",
+      addon:false
+    },
+  ]
+};
+
+let cart = {}; // { code: { withAddon: bool } }
+
+const subjectListEl = document.getElementById('subjectList');
+const receiptItemsEl = document.getElementById('receiptItems');
+const totalAmountEl = document.getElementById('totalAmount');
+const payBtn = document.getElementById('payBtn');
+const qrBlock = document.getElementById('qrBlock');
+const qrImg = document.getElementById('qrImg');
+const qrAmount = document.getElementById('qrAmount');
+const orderIdDisplay = document.getElementById('orderIdDisplay');
+const lineBtn = document.getElementById('lineBtn');
+const downloadsEl = document.getElementById('downloads');
+
+qrImg.src = CONFIG.qrImageSrc;
+
+function renderSubjects(){
+  subjectListEl.innerHTML = CONFIG.subjects.map(s => `
+    <div class="subject" data-code="${s.code}">
+      <input type="checkbox" class="main-check" id="chk-${s.code}">
+      <div class="body">
+        <div class="code">${s.code}</div>
+        <div class="desc">${s.desc}</div>
+        ${s.previewLink ? `<a class="preview-link" href="${s.previewLink}" target="_blank" rel="noopener">👁️ ดูตัวอย่าง</a>` : ``}
+        ${s.addon ? `
+        <div class="addon" id="addon-${s.code}">
+          <input type="checkbox" id="chk-addon-${s.code}">
+          <label for="chk-addon-${s.code}">${s.addonLabel} <span class="tag">+${s.addonPrice}฿</span></label>
+        </div>` : ``}
+      </div>
+      <div class="price">${s.price}฿</div>
+    </div>
+  `).join('');
+
+  CONFIG.subjects.forEach(s => {
+    const mainChk = document.getElementById(`chk-${s.code}`);
+    mainChk.addEventListener('change', () => {
+      if(mainChk.checked){
+        cart[s.code] = { withAddon:false };
+        if(s.addon) document.getElementById(`addon-${s.code}`).classList.add('show');
+      } else {
+        delete cart[s.code];
+        if(s.addon){
+          document.getElementById(`addon-${s.code}`).classList.remove('show');
+          document.getElementById(`chk-addon-${s.code}`).checked = false;
+        }
+      }
+      resetPaymentState();
+      renderReceipt();
+    });
+    if(s.addon){
+      const addonChk = document.getElementById(`chk-addon-${s.code}`);
+      addonChk.addEventListener('change', () => {
+        if(cart[s.code]) cart[s.code].withAddon = addonChk.checked;
+        resetPaymentState();
+        renderReceipt();
+      });
+    }
+  });
+}
+
+function calcTotal(){
+  let total = 0;
+  Object.entries(cart).forEach(([code, item]) => {
+    const s = CONFIG.subjects.find(x => x.code === code);
+    total += s.price;
+    if(item.withAddon) total += s.addonPrice;
+  });
+  return total;
+}
+
+function renderReceipt(){
+  const entries = Object.entries(cart);
+  if(entries.length === 0){
+    receiptItemsEl.innerHTML = `<div class="receipt-empty">ยังไม่ได้เลือกชีท</div>`;
+  } else {
+    receiptItemsEl.innerHTML = entries.map(([code, item]) => {
+      const s = CONFIG.subjects.find(x => x.code === code);
+      let rows = `<div class="receipt-row"><span class="name">${s.code}</span><span class="amt">${s.price}฿</span></div>`;
+      if(item.withAddon){
+        rows += `<div class="receipt-row"><span class="name">　+ ${s.addonLabel}</span><span class="amt">${s.addonPrice}฿</span></div>`;
+      }
+      return rows;
+    }).join('');
+  }
+  const total = calcTotal();
+  totalAmountEl.textContent = total;
+  payBtn.disabled = total === 0;
+}
+
+function resetPaymentState(){
+  qrBlock.classList.remove('show');
+  downloadsEl.classList.remove('show');
+}
+
+function makeOrderId(){
+  const d = new Date();
+  const stamp = d.getFullYear().toString().slice(2) +
+    String(d.getMonth()+1).padStart(2,'0') +
+    String(d.getDate()).padStart(2,'0') +
+    String(d.getHours()).padStart(2,'0') +
+    String(d.getMinutes()).padStart(2,'0') +
+    String(d.getSeconds()).padStart(2,'0');
+  const rand = Math.floor(Math.random()*90+10);
+  return `ORDER${stamp}${rand}`;
+}
+
+async function logOrderToSheet(orderId, total, itemsSummary){
+  try{
+    await fetch(CONFIG.gasWebAppUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'text/plain'},
+      body: JSON.stringify({ action:'create_order', orderId, total, items:itemsSummary })
+    });
+  }catch(err){
+    console.error('บันทึกออเดอร์ไม่สำเร็จ (ไม่กระทบลูกค้า แต่แอดมินควรเช็ค):', err);
+  }
+}
+
+payBtn.addEventListener('click', async () => {
+  const total = calcTotal();
+  const orderId = makeOrderId();
+  const itemsSummary = Object.entries(cart).map(([code, item]) => {
+    return item.withAddon ? `${code}+ADDON` : code;
+  }).join(', ');
+
+  orderIdDisplay.textContent = orderId;
+  qrAmount.textContent = total;
+  document.getElementById('bankFallback').textContent = CONFIG.bankInfo;
+
+  const lineMessage = `เลขออเดอร์ ${orderId}\nรายการ: ${itemsSummary}\nยอด: ${total} บาท\n(แนบรูปสลิปในแชทนี้ได้เลยค่ะ)`;
+  lineBtn.href = CONFIG.lineOaId
+    ? `https://line.me/R/oaMessage/${encodeURIComponent(CONFIG.lineOaId)}/?${encodeURIComponent(lineMessage)}`
+    : CONFIG.lineAddFriendUrl; // ยังไม่ได้ใส่ @LINE ID เลยพาไปหน้า add friend แทน (ไม่มีข้อความ prefill)
+
+  qrBlock.classList.add('show');
+  downloadsEl.classList.remove('show');
+  qrBlock.scrollIntoView({behavior:'smooth', block:'nearest'});
+
+  logOrderToSheet(orderId, total, itemsSummary);
+});
+
+lineBtn.addEventListener('click', () => {
+  downloadsEl.classList.add('show');
+});
+
+renderSubjects();
+renderReceipt();
+</script>
+</body>
+</html>
