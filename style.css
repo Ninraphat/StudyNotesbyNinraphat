@@ -228,6 +228,11 @@
   }
   .receipt-total .num{color:var(--pen);}
   .btn{
+    display: block;         /* <--- เพิ่มบรรทัดนี้: บังคับให้เป็นกล่อง จะได้ไม่ทับข้อความอื่น */
+    box-sizing: border-box; /* <--- เพิ่มบรรทัดนี้: ไม่ให้ปุ่มล้นขอบ */
+    text-align: center;     /* <--- เพิ่มบรรทัดนี้: จัดตัวหนังสือให้อยู่ตรงกลาง */
+    text-decoration: none;  /* <--- เพิ่มบรรทัดนี้: เอาเส้นใต้ออก (ถ้ามี) */
+    
     width:100%;
     padding:13px;
     border:none;
