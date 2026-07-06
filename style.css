@@ -369,7 +369,8 @@
 
 /* ---------- Gallery page (reviews) ---------- */
 .gallery-wrap{
-  max-width:1040px;
+  /* ปรับความกว้างของหน้าให้แคบลงนิดหน่อย เพื่อให้รูปใหญ่กำลังพอดี ไม่งั้นถ้าจอคอมกว้างมากๆ รูปจะยืดใหญ่เกินไปครับ */
+  max-width: 860px; 
   margin:0 auto;
   padding:24px 20px 60px;
 }
@@ -382,22 +383,28 @@
   line-height:1.6;
 }
 .gallery-grid{
-  columns: 3 220px;
-  column-gap:14px;
+  /* เปลี่ยนจาก 3 เป็น 2 คอลัมน์ รูปจะใหญ่ขึ้นอย่างเห็นได้ชัด */
+  columns: 2 320px; 
+  column-gap: 20px;
 }
 .gallery-grid img{
   width:100%;
   display:block;
-  margin-bottom:14px;
+  margin-bottom:20px; /* เพิ่มระยะห่างด้านล่างรูป */
   border-radius:14px;
   border:1px solid rgba(143,203,234,0.35);
   box-shadow:0 8px 20px rgba(79,168,216,0.14);
   break-inside:avoid;
 }
-@media (max-width:640px){
-  .gallery-grid{ columns: 2 140px; }
+
+/* สำหรับหน้าจอมือถือหรือแท็บเล็ตเล็ก */
+@media (max-width: 640px){
+  .gallery-grid{ 
+    /* บังคับให้แสดงแค่ 1 คอลัมน์ รูปจะใหญ่เต็มหน้าจอมือถือเลยครับ */
+    columns: 1; 
+  }
 }
-grid-template-columns: 1fr; /* บังคับให้แสดงแค่แถวละ 1 รูป ภาพจะใหญ่เต็มจอ */
+
 /* ---------- Grades page ---------- */
 .grades-wrap{
   max-width:640px;
