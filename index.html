@@ -62,31 +62,22 @@
 <footer>หากลิงก์ใช้ไม่ได้ กรุณาแคปใบสั่งซื้อ แล้วติดต่อทาง LINE</footer>
 
 <script>
-/* ------------------------------------------------------------------
-   CONFIG — แก้ตรงนี้ที่เดียวพอ
-   1) qrImageSrc: เปลี่ยน "qr-placeholder.png" เป็นไฟล์รูป QR จริงของคุณ
-      (วางไฟล์รูปไว้โฟลเดอร์เดียวกับ index.html แล้วใส่ชื่อไฟล์ตรงนี้)
-   2) driveLink: ใส่ลิงก์ Google Drive ของแต่ละวิชา (และลิงก์ข้อสอบเสริม)
-------------------------------------------------------------------- */
 const CONFIG = {
   gasWebAppUrl: "https://script.google.com/macros/s/AKfycbye9dDxpzW9m_VEzbppUWCMnXmJU92iNgMzJIS69dYa02kwsuqip0AFlUrSLSCyUlM/exec",
   qrImageSrc: "qr-placeholder.png",
-  // จากเว็บเดิม: ติดต่อสั่งซื้อทาง LINE OA
   lineAddFriendUrl: "https://lin.ee/niqfKMM",
-  // ใส่ LINE ID ของ OA (เช่น @abc1234, ดูได้ใน LINE OA Manager > Settings) เพื่อให้เปิดแชทพร้อมข้อความเลขออเดอร์อัตโนมัติ
-  // ถ้ายังไม่ใส่ ปุ่มจะพาไปที่ลิงก์ Add Friend ด้านบนแทน (ไม่มีข้อความ prefill)
   lineOaId: "@909derit",
   bankInfo: "SCB ไทยพาณิชย์ 232-2-24173-2\nศิรภัทร์ ชุมสาย ณ อยุธยา",
   subjects: [
     {
-      code:"ENG2001", price:29,
+      code:"ENG2001", price:29, category:"summary",
       desc:"สรุปเนื้อหาทฤษฎีเทคนิคต่างๆ + คำแปลบทความและไฮไลท์ศัพท์ Seen Passage ที่จะออกสอบ + ตัวอย่างและแบบฝึกหัดที่อาจารย์ให้ทำทั้งหมด",
       previewLink:"https://drive.google.com/file/d/1UkOVLTG5SW_FugC0UhmWMNXrBt3ywsfg/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2001",
       addon:false
     },
     {
-      code:"ENG2002", price:29,
+      code:"ENG2002", price:29, category:"summary",
       desc:"สรุปเนื้อหาและเทคนิคการอ่านตีความ 5 บท + คำแปลและเฉลยแบบฝึกหัดจาก Seen Passage ที่จะออกสอบทุกบทของเทอมนี้",
       previewLink:"https://drive.google.com/file/d/1_u2dksug7DxIl63vGPt9DpmT2qmByn0H/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2002",
@@ -94,7 +85,7 @@ const CONFIG = {
       addonLink:"https://drive.google.com/FILE_ID_ENG2002_FLASHCARD"
     },
     {
-      code:"ENG2101", price:29,
+      code:"ENG2101", price:29, category:"summary",
       desc:"สรุปจากหนังสือ เน้นสิ่งที่อาจารย์สอน ท้ายคาบอาจารย์มักมีโจทย์ให้ฝึก รวบรวมพร้อมคำตอบไว้ท้ายสรุป",
       previewLink:"https://drive.google.com/file/d/1X7w3gIjutSjAWAsW60XYxQCxAqmxC4Kr/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2101",
@@ -102,21 +93,21 @@ const CONFIG = {
       addonLink:"https://drive.google.com/FILE_ID_ENG2101_EXAM"
     },
     {
-      code:"ENG2102", price:29,
+      code:"ENG2102", price:29, category:"summary",
       desc:"แนวข้อสอบที่อาจารย์ให้ทำพร้อมเฉลยและอธิบายข้อถูก + pre-test ก่อนเรียน + แนวข้อเขียนพร้อมตัวอย่าง + Grammar ที่ใช้สอบ",
       previewLink:"https://drive.google.com/file/d/1as-8OteWZjSwpe7wpbzAeooTSYxJydBD/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2102",
       addon:false
     },
     {
-      code:"ENL2001", price:29,
+      code:"ENL2001", price:29, category:"summary",
       desc:"เนื้อหาสไลด์อาจารย์ + สรุปจากหนังสือเพิ่มเติม อาจารย์เน้นออกสอบตามสไลด์ เหมาะกับคนไม่ได้เข้าเรียนหรือไม่มีเวลา",
       previewLink:"https://drive.google.com/file/d/1VhwAAnzJ2vy1sifn9FuQEX7gXQa0_gG6/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENL2001",
       addon:false
     },
     {
-      code:"ENG2401", price:29,
+      code:"ENG2401", price:29, category:"summary",
       desc:"สรุปเนื้อหาบทที่ 1-9 + แนวและเทคนิคการทำข้อสอบอัตนัย 4 พาร์ท",
       previewLink:"https://drive.google.com/file/d/1f75zbwHli59xlIXCM-VsStEfG-_Ddmme/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2401",
@@ -124,16 +115,27 @@ const CONFIG = {
       addonLink:"https://drive.google.com/FILE_ID_ENG2401_EXAM"
     },
     {
-      code:"ENG2601", price:29,
+      code:"ENG2601", price:29, category:"summary",
       desc:"สรุปเนื้อหาจากหนังสือ + เอกสารเพิ่มเติมจากอาจารย์ + บทแปลกลอนที่อาจารย์สอน",
       previewLink:"https://drive.google.com/file/d/1hMmfIdhV1tAGRbY7q3j2G0LAR1iuQayI/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2601",
       addon:false
     },
+
+    { code:"ENL2101", price:49, category:"lecture",
+      desc:"ชีทเรียนสรุปเนื้อหารายบทตลอดเทอม เรียบเรียงจากเนื้อหาที่อาจารย์สอนในคาบ",
+      driveLink:"https://drive.google.com/FILE_ID_ENL2101_LECTURE", addon:false },
+    { code:"ENS3401", price:49, category:"lecture",
+      desc:"ชีทเรียนสรุปเนื้อหารายบทตลอดเทอม เรียบเรียงจากเนื้อหาที่อาจารย์สอนในคาบ",
+      driveLink:"https://drive.google.com/FILE_ID_ENS3401_LECTURE", addon:false },
+    { code:"ENS4301", price:49, category:"lecture",
+      desc:"ชีทเรียนสรุปเนื้อหารายบทตลอดเทอม เรียบเรียงจากเนื้อหาที่อาจารย์สอนในคาบ",
+      driveLink:"https://drive.google.com/FILE_ID_ENS4301_LECTURE", addon:false },
   ]
 };
 
-let cart = {}; // { code: { withAddon: bool } }
+let cart = {};
+let activeCategory = "summary";
 
 const subjectListEl = document.getElementById('subjectList');
 const receiptItemsEl = document.getElementById('receiptItems');
@@ -148,8 +150,25 @@ const downloadsEl = document.getElementById('downloads');
 
 qrImg.src = CONFIG.qrImageSrc;
 
+function renderCategoryTabs(){
+  const summaryCount = CONFIG.subjects.filter(s => s.category === "summary").length;
+  const lectureCount = CONFIG.subjects.filter(s => s.category === "lecture").length;
+  return `
+    <div class="cat-tabs">
+      <button type="button" class="cat-tab ${activeCategory==='summary' ? 'active' : ''}" data-cat="summary">
+        📚 ชีทสรุป <span class="cat-count">${summaryCount}</span>
+      </button>
+      <button type="button" class="cat-tab ${activeCategory==='lecture' ? 'active' : ''}" data-cat="lecture">
+        📖 ชีทเรียน <span class="cat-count">${lectureCount}</span>
+      </button>
+    </div>
+  `;
+}
+
 function renderSubjects(){
-  subjectListEl.innerHTML = CONFIG.subjects.map(s => `
+  const visibleSubjects = CONFIG.subjects.filter(s => s.category === activeCategory);
+
+  subjectListEl.innerHTML = renderCategoryTabs() + visibleSubjects.map(s => `
     <div class="subject" data-code="${s.code}">
       <input type="checkbox" class="main-check" id="chk-${s.code}">
       <div class="body">
@@ -166,8 +185,16 @@ function renderSubjects(){
     </div>
   `).join('');
 
-  CONFIG.subjects.forEach(s => {
+  document.querySelectorAll('.cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      activeCategory = tab.dataset.cat;
+      renderSubjects();
+    });
+  });
+
+  visibleSubjects.forEach(s => {
     const mainChk = document.getElementById(`chk-${s.code}`);
+    mainChk.checked = !!cart[s.code];
     mainChk.addEventListener('change', () => {
       if(mainChk.checked){
         cart[s.code] = { withAddon:false };
@@ -184,6 +211,10 @@ function renderSubjects(){
     });
     if(s.addon){
       const addonChk = document.getElementById(`chk-addon-${s.code}`);
+      if(cart[s.code]){
+        addonChk.checked = !!cart[s.code].withAddon;
+        document.getElementById(`addon-${s.code}`).classList.add('show');
+      }
       addonChk.addEventListener('change', () => {
         if(cart[s.code]) cart[s.code].withAddon = addonChk.checked;
         resetPaymentState();
@@ -266,7 +297,7 @@ payBtn.addEventListener('click', async () => {
   const lineMessage = `เลขออเดอร์ ${orderId}\nรายการ: ${itemsSummary}\nยอด: ${total} บาท\n(แนบรูปสลิปในแชทนี้ได้เลยค่ะ)`;
   lineBtn.href = CONFIG.lineOaId
     ? `https://line.me/R/oaMessage/${encodeURIComponent(CONFIG.lineOaId)}/?${encodeURIComponent(lineMessage)}`
-    : CONFIG.lineAddFriendUrl; // ยังไม่ได้ใส่ @LINE ID เลยพาไปหน้า add friend แทน (ไม่มีข้อความ prefill)
+    : CONFIG.lineAddFriendUrl;
 
   qrBlock.classList.add('show');
   downloadsEl.classList.remove('show');
