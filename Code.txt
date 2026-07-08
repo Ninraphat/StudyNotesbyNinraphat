@@ -1,0 +1,276 @@
+const CHANNEL_ACCESS_TOKEN = "qh3kU5rTzDkRgpgbaVKaAC+GTrK7sePUxTO1AOwgAtGX3pZRPMZI3duqIlgXOWsbHv6EiySrlQeyUA3RbNI2H5GQyBFJikmtjgZvm7/9MSavniiCMZhrmcMJA4W8OLXVGCwfZ4egKc0RozyAba9EhwdB04t89/1O/w1cDnyilFU="; // จาก LINE Developers Console
+const ADMIN_USER_IDS = ["Ua17afba72d706c3cdcc89d07f47f4d29"]; // userId ของแอดมิน (คุณ) เท่านั้นที่สั่งอนุมัติได้
+const SHEET_ID = "1tNq0VyI0qHOKa6yoMpCoHV8j0jd1bQ5DENgnKUfbrAc"; // เปิด Sheet แล้วก็อปจาก URL ช่วง /d/XXXX/edit
+
+/* ------------------------------------------------------------------
+   SUBJECT_LINKS — key ต้องตรงกับ id ที่เว็บสร้างให้อัตโนมัติ
+   รูปแบบ key: "หมวด_รหัสวิชา" เช่น "summary_ENG2001" หรือ "lecture_ENL2101"
+   (หมวด: "summary" = ชีทสรุป, "lecture" = ชีทเรียน)
+   ทำแบบนี้เพื่อรองรับกรณีวิชาเดียวกันขายทั้ง 2 หมวด โดยไม่ชนกัน
+   เช่นถ้าวันหนึ่ง ENL2001 มีขายทั้งชีทสรุปและชีทเรียน จะมี 2 entry แยกกัน:
+     "summary_ENL2001": {...}   และ   "lecture_ENL2001": {...}
+   field "code" คือรหัสวิชาที่จะโชว์ให้ลูกค้าเห็นในข้อความ (ไม่มี prefix หมวด)
+------------------------------------------------------------------- */
+const SUBJECT_LINKS = {
+  "summary_ENG2001": { code:"ENG2001", link:"https://drive.google.com/drive/folders/1DKhFQyH0x7YV1bRn2H2Dw2ZeJfnHX_Ly?usp=sharing" },
+  "summary_ENG2002": { code:"ENG2002", link:"https://drive.google.com/drive/folders/1duICXvs1sqa7WJXOHcDMj0FuLowkSZav?usp=sharing", addonLink:"https://quizlet.com/user/Ch_siraphat/folders/eng2002?i=1rqp8b&x=1xqt", addonLabel:"Flashcard Quizlet \n🔑รหัสของเซ็ตศัพท์ทุกอันคือ 4444 นะคะ" },
+  "summary_ENG2101": { code:"ENG2101", link:"https://drive.google.com/drive/folders/1qaSMlQGxVQJZAU6Yx9-XEC_1zlUMG0Ht?usp=sharing", addonLink:"https://drive.google.com/file/d/1NdzMQANzEx9eE49IDn48YzCrJe4PThvk/view?usp=drivesdk", addonLabel:"แนวข้อสอบเพิ่มเติม" },
+  "summary_ENG2102": { code:"ENG2102", link:"https://drive.google.com/drive/folders/1NwML33BU98K1Q3M_90AcOUow4Bduls7q?usp=sharing" },
+  "summary_ENL2001": { code:"ENL2001", link:"https://drive.google.com/drive/folders/1EPANkXkS6hB_CpXLJSoJr8nanuHnYJjA?usp=sharing" },
+  "summary_ENG2401": { code:"ENG2401", link:"https://drive.google.com/drive/folders/1h8dfHSJACReT8QI_n35z96Q3Q9hYm3uq?usp=sharing", addonLink:"https://drive.google.com/file/d/1si398DBWBQ5YWXKCmAgxk6z5H4pANM7y/view?usp=drivesdk \n📍พิเศษสำหรับใครที่ซื้อ ENG2401 มีบันทึกเทปติวฟรีผ่าน google meet ในโน้ตกลุ่ม อย่าลืมเข้ากลุ่มจากลิ้งค์ท้ายบิล รับลิ้งค์ติวนะคะ🥹", addonLabel:"แนวข้อสอบ 3 ชุด" },
+  "summary_ENG2601": { code:"ENG2601", link:"https://drive.google.com/drive/folders/1VQ2GcRcUrQYYKxXfqSR8SrdfZDaHzRbK?usp=sharing" },
+
+  "lecture_ENL2101": { code:"ENL2101", link:"https://drive.google.com/file/d/1RAUU9AnJILX_mGSqZt5iKV54o3QjSuX_/view?usp=drivesdk" },
+  "lecture_ENS3401": { code:"ENS3401", link:"https://drive.google.com/file/d/1q1EAGWPXfRKG943oEzn1O9_hBM5KGTk-/view?usp=drivesdk" },
+  "lecture_ENS4301": { code:"ENS4301", link:"https://drive.google.com/FILE_ID_ENS4301_LECTURE" }, // ยังไม่ได้ใส่ลิงก์จริง แก้ตรงนี้
+};
+
+function getSheet(name){
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  let sheet = ss.getSheetByName(name);
+  if(!sheet){
+    sheet = ss.insertSheet(name);
+    if(name === "Orders"){
+      sheet.appendRow(["OrderID","Timestamp","Items","Total","LineUserId","SlipReceived","Status","SentAt"]);
+    }
+  }
+  return sheet;
+}
+
+function debugLog(msg){
+  const sheet = getSheet("DebugLog");
+  sheet.appendRow([new Date(), msg]);
+}
+
+function findOrderRow(sheet, orderId){
+  const data = sheet.getDataRange().getValues();
+  for(let i=1; i<data.length; i++){
+    if(data[i][0] === orderId) return i+1;
+  }
+  return -1;
+}
+
+/* -------------------- รับ request จากเว็บ (สร้างออเดอร์) -------------------- */
+function doPost(e){
+  try{
+    const body = JSON.parse(e.postData.contents);
+
+    if(body.action === "create_order"){
+      const sheet = getSheet("Orders");
+      sheet.appendRow([body.orderId, new Date(), body.items, body.total, "", false, "รอชำระเงิน", ""]);
+      return ContentService.createTextOutput(JSON.stringify({ok:true}));
+    }
+
+    if(body.events){
+      body.events.forEach(handleLineEvent);
+      return ContentService.createTextOutput(JSON.stringify({ok:true}));
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ok:false, error:"unknown action"}));
+  }catch(err){
+    debugLog("doPost error: " + err);
+    return ContentService.createTextOutput(JSON.stringify({ok:false, error:String(err)}));
+  }
+}
+
+/* -------------------- จัดการ event จาก LINE -------------------- */
+function handleLineEvent(event){
+  const userId = event.source && event.source.userId;
+  if(!userId) return;
+  debugLog("event from userId: " + userId + " | type: " + event.type);
+
+  if(event.type !== "message") return;
+
+  const isAdmin = ADMIN_USER_IDS.indexOf(userId) !== -1;
+
+  if(isAdmin && event.message.type === "text"){
+    const text = event.message.text.trim();
+
+    if(text.startsWith("/ส่ง")){
+      const orderId = text.replace("/ส่ง","").trim();
+      approveAndSendLinks(orderId, event.replyToken);
+      return;
+    }
+    if(text.startsWith("/ดู")){
+      const orderId = text.replace("/ดู","").trim();
+      showOrderDetail(orderId, event.replyToken);
+      return;
+    }
+  }
+
+  if(event.message.type === "text"){
+    const text = event.message.text;
+    const match = text.match(/ORDER[0-9]+/);
+    if(match){
+      const orderId = match[0];
+      const sheet = getSheet("Orders");
+      const row = findOrderRow(sheet, orderId);
+      if(row > 0){
+        const displayName = getLineProfile(userId);
+        sheet.getRange(row, 9).setValue(displayName);
+
+        sheet.getRange(row, 5).setValue(userId);
+        replyMessage(event.replyToken, `รับออเดอร์ ${orderId} แล้วค่ะ ✅\nกรุณาแนบรูปสลิปการโอนในแชทนี้ได้เลย รอแอดมินตรวจสอบสักครู่นะคะ`);
+      } else {
+        replyMessage(event.replyToken, `ไม่พบเลขออเดอร์ ${orderId} ในระบบ กรุณาตรวจสอบอีกครั้งค่ะ`);
+      }
+    }
+  }
+  if(event.message.type === "image"){
+    const sheet = getSheet("Orders");
+    const data = sheet.getDataRange().getValues();
+    for(let i=data.length-1; i>=1; i--){
+      if(data[i][4] === userId && data[i][6] !== "ส่งแล้ว"){
+
+        const alreadyReceived = data[i][5];
+
+        sheet.getRange(i+1, 6).setValue(true);
+        sheet.getRange(i+1, 7).setValue("รอตรวจสอบสลิป");
+
+        if (!alreadyReceived) {
+          replyMessage(event.replyToken, `ได้รับสลิปแล้วค่ะ 🧾 รอแอดมินตรวจสอบและส่งลิงก์ให้นะคะ (ปกติไม่เกิน 1-2 ชม.)`);
+          const customerName = getLineProfile(userId);
+          const orderId = data[i][0];
+          const msg = `📥 มีสลิปใหม่จาก: ${customerName}\nออเดอร์: ${orderId}\nยอด: ${data[i][3]} บาท`;
+          notifyAdminsWithButton(msg, orderId);
+        } else {
+          replyMessage(event.replyToken, `ได้รับรูปภาพเพิ่มเติมแล้วค่ะ รอแอดมินตรวจสอบสักครู่นะคะ`);
+        }
+
+        return;
+      }
+    }
+  }
+}
+
+/* -------------------- แอดมินอนุมัติ -> ส่งลิงก์ให้ลูกค้า -------------------- */
+function approveAndSendLinks(orderId, replyToken){
+  const sheet = getSheet("Orders");
+  const row = findOrderRow(sheet, orderId);
+  if(row < 0){
+    replyMessage(replyToken, `ไม่พบออเดอร์ ${orderId}`);
+    return;
+  }
+  const rowData = sheet.getRange(row, 1, 1, 8).getValues()[0];
+  const [ , , items, total, lineUserId, , status] = rowData;
+
+  if(!lineUserId){
+    replyMessage(replyToken, `ออเดอร์ ${orderId} ยังไม่มี LineUserId ของลูกค้า (ลูกค้ายังไม่ได้พิมพ์เลขออเดอร์ในแชท)`);
+    return;
+  }
+  if(status === "ส่งแล้ว"){
+    replyMessage(replyToken, `ออเดอร์ ${orderId} ส่งลิงก์ไปแล้วก่อนหน้านี้`);
+    return;
+  }
+
+  // items เป็น id แบบ "หมวด_รหัสวิชา" เช่น "summary_ENG2001+ADDON" หรือ "lecture_ENL2101"
+  const idList = items.split(",").map(s => s.trim());
+  let msg = `ชำระเงินสำเร็จค่ะ 🩵\nนี่คือลิงก์ไฟล์ของคุณ:\n\n`;
+  idList.forEach(idRaw => {
+    const hasAddon = idRaw.includes("+ADDON");
+    const cleanId = idRaw.replace("+ADDON","").trim();
+    const s = SUBJECT_LINKS[cleanId];
+    if(!s) return;
+    msg += `📄 ${s.code}: ${s.link}\n`;
+    if(hasAddon && s.addonLink){
+      msg += `📝 ${s.code} (${s.addonLabel}): ${s.addonLink}\n`;
+    }
+  });
+  msg += `\nมีปัญหาติดขัดหรือสงสัยตรงไหนทักมาถามได้ตลอดนะคะ💛
+\nขออนุญาตไม่ให้ส่งไฟล์ต่อนะคะ เราทำราคาที่ affordable แล้ว และตั้งใจทำมาก อยากให้เคารพสิทธิและความทุ่มเทที่เราตั้งใจเรียนทุกคาบและสรุปด้วยตัวเองนะคะ💖🙇🏻‍♀️
+\nขอบคุณนะคะ ขอให้โชค A⭐️ ถ้าชอบ รอวิชาอื่นๆ ได้นะคะ📚 🥳เราสร้างเป็นโฟลเดอร์ เพราะอาจจะไปใส่ไฟล์เพิ่มค่ะ เช่นพวก podcast หรือ แบบฝึกหัดค่ะ พวกนั้นฟรีเลยค่ะ แต่กลัวจะลืมมาบอก เพราะคนซื้อเยอะค่ะ
+\n🦖พิเศษสำหรับลูกค้าชีทติวของจูน เข้ากลุ่มนี้ รับลิ้งค์ Flashcard Oxford 3000(A2) ฟรีนะคะ "Study notes by Ninraphat". Visit the link below to join the OpenChat. https://line.me/ti/g2/3TTmLWH89WBU2vRAQQjSGX18zr3tuI1ol6DItg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default`;
+
+  pushMessage(lineUserId, msg);
+  sheet.getRange(row, 7).setValue("ส่งแล้ว");
+  sheet.getRange(row, 8).setValue(new Date());
+
+  replyMessage(replyToken, `ส่งลิงก์ให้ออเดอร์ ${orderId} เรียบร้อยแล้ว ✅`);
+}
+
+function showOrderDetail(orderId, replyToken){
+  const sheet = getSheet("Orders");
+  const row = findOrderRow(sheet, orderId);
+  if(row < 0){
+    replyMessage(replyToken, `ไม่พบออเดอร์ ${orderId}`);
+    return;
+  }
+  const rowData = sheet.getRange(row, 1, 1, 8).getValues()[0];
+  const [id, timestamp, items, total, lineUserId, slipReceived, status] = rowData;
+  const msg = `ออเดอร์: ${id}\nเวลา: ${timestamp}\nรายการ: ${items}\nยอด: ${total} บาท\nได้รับสลิป: ${slipReceived ? "ใช่" : "ยังไม่ได้รับ"}\nสถานะ: ${status}`;
+  replyMessage(replyToken, msg);
+}
+
+/* -------------------- LINE API helpers -------------------- */
+function replyMessage(replyToken, text){
+  UrlFetchApp.fetch("https://api.line.me/v2/bot/message/reply", {
+    method: "post",
+    headers: { "Authorization": "Bearer " + CHANNEL_ACCESS_TOKEN, "Content-Type": "application/json" },
+    payload: JSON.stringify({ replyToken, messages: [{ type:"text", text }] }),
+    muteHttpExceptions: true
+  });
+}
+
+function pushMessage(userId, text){
+  UrlFetchApp.fetch("https://api.line.me/v2/bot/message/push", {
+    method: "post",
+    headers: { "Authorization": "Bearer " + CHANNEL_ACCESS_TOKEN, "Content-Type": "application/json" },
+    payload: JSON.stringify({ to: userId, messages: [{ type:"text", text }] }),
+    muteHttpExceptions: true
+  });
+}
+
+function notifyAdmins(text){
+  ADMIN_USER_IDS.forEach(id => pushMessage(id, text));
+}
+
+/* ---------------- ดึงข้อมูลโปรไฟล์ลูกค้าจาก LINE ---------------- */
+function getLineProfile(userId) {
+  try {
+    const response = UrlFetchApp.fetch("https://api.line.me/v2/bot/profile/" + userId, {
+      method: "get",
+      headers: { "Authorization": "Bearer " + CHANNEL_ACCESS_TOKEN },
+      muteHttpExceptions: true
+    });
+    const data = JSON.parse(response.getContentText());
+    return data.displayName || "ไม่ทราบชื่อ";
+  } catch (err) {
+    return "ไม่ทราบชื่อ";
+  }
+}
+
+/* ---------------- แจ้งเตือนแอดมินพร้อมปุ่มกด ---------------- */
+function notifyAdminsWithButton(text, orderId) {
+  const payload = {
+    to: "",
+    messages: [{
+      type: "text",
+      text: text,
+      quickReply: {
+        items: [
+          {
+            type: "action",
+            action: {
+              type: "message",
+              label: "✅ อนุมัติส่งไฟล์",
+              text: "/ส่ง " + orderId
+            }
+          }
+        ]
+      }
+    }]
+  };
+
+  ADMIN_USER_IDS.forEach(id => {
+    payload.to = id;
+    UrlFetchApp.fetch("https://api.line.me/v2/bot/message/push", {
+      method: "post",
+      headers: {
+        "Authorization": "Bearer " + CHANNEL_ACCESS_TOKEN,
+        "Content-Type": "application/json"
+      },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    });
+  });
+}
