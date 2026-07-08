@@ -137,6 +137,10 @@ const CONFIG = {
   ]
 };
 
+// สร้าง id เฉพาะของแต่ละวิชา = หมวด + รหัสวิชา (กันชนกันตอนวิชาเดียวกันขายทั้ง 2 หมวด)
+// เช่น ถ้าวันหนึ่ง ENL2001 มีขายทั้งชีทสรุปและชีทเรียน จะได้ id เป็น "summary_ENL2001" กับ "lecture_ENL2001" แยกกันชัดเจน
+CONFIG.subjects.forEach(s => { s.id = `${s.category}_${s.code}`; });
+
 let cart = {};
 let activeCategory = "summary";
 
@@ -172,16 +176,16 @@ function renderSubjects(){
   const visibleSubjects = CONFIG.subjects.filter(s => s.category === activeCategory);
 
   subjectListEl.innerHTML = renderCategoryTabs() + visibleSubjects.map(s => `
-    <div class="subject" data-code="${s.code}">
-      <input type="checkbox" class="main-check" id="chk-${s.code}">
+    <div class="subject" data-id="${s.id}">
+      <input type="checkbox" class="main-check" id="chk-${s.id}">
       <div class="body">
         <div class="code">${s.code}</div>
         <div class="desc">${s.desc}</div>
         ${s.previewLink ? `<a class="preview-link" href="${s.previewLink}" target="_blank" rel="noopener">👁️ ดูตัวอย่าง</a>` : ``}
         ${s.addon ? `
-        <div class="addon" id="addon-${s.code}">
-          <input type="checkbox" id="chk-addon-${s.code}">
-          <label for="chk-addon-${s.code}">${s.addonLabel} <span class="tag">+${s.addonPrice}฿</span></label>
+        <div class="addon" id="addon-${s.id}">
+          <input type="checkbox" id="chk-addon-${s.id}">
+          <label for="chk-addon-${s.id}">${s.addonLabel} <span class="tag">+${s.addonPrice}฿</span></label>
         </div>` : ``}
       </div>
       <div class="price">${s.price}฿</div>
@@ -196,30 +200,30 @@ function renderSubjects(){
   });
 
   visibleSubjects.forEach(s => {
-    const mainChk = document.getElementById(`chk-${s.code}`);
-    mainChk.checked = !!cart[s.code];
+    const mainChk = document.getElementById(`chk-${s.id}`);
+    mainChk.checked = !!cart[s.id];
     mainChk.addEventListener('change', () => {
       if(mainChk.checked){
-        cart[s.code] = { withAddon:false };
-        if(s.addon) document.getElementById(`addon-${s.code}`).classList.add('show');
+        cart[s.id] = { withAddon:false };
+        if(s.addon) document.getElementById(`addon-${s.id}`).classList.add('show');
       } else {
-        delete cart[s.code];
+        delete cart[s.id];
         if(s.addon){
-          document.getElementById(`addon-${s.code}`).classList.remove('show');
-          document.getElementById(`chk-addon-${s.code}`).checked = false;
+          document.getElementById(`addon-${s.id}`).classList.remove('show');
+          document.getElementById(`chk-addon-${s.id}`).checked = false;
         }
       }
       resetPaymentState();
       renderReceipt();
     });
     if(s.addon){
-      const addonChk = document.getElementById(`chk-addon-${s.code}`);
-      if(cart[s.code]){
-        addonChk.checked = !!cart[s.code].withAddon;
-        document.getElementById(`addon-${s.code}`).classList.add('show');
+      const addonChk = document.getElementById(`chk-addon-${s.id}`);
+      if(cart[s.id]){
+        addonChk.checked = !!cart[s.id].withAddon;
+        document.getElementById(`addon-${s.id}`).classList.add('show');
       }
       addonChk.addEventListener('change', () => {
-        if(cart[s.code]) cart[s.code].withAddon = addonChk.checked;
+        if(cart[s.id]) cart[s.id].withAddon = addonChk.checked;
         resetPaymentState();
         renderReceipt();
       });
@@ -229,8 +233,8 @@ function renderSubjects(){
 
 function calcTotal(){
   let total = 0;
-  Object.entries(cart).forEach(([code, item]) => {
-    const s = CONFIG.subjects.find(x => x.code === code);
+  Object.entries(cart).forEach(([id, item]) => {
+    const s = CONFIG.subjects.find(x => x.id === id);
     total += s.price;
     if(item.withAddon) total += s.addonPrice;
   });
@@ -242,9 +246,9 @@ function renderReceipt(){
   if(entries.length === 0){
     receiptItemsEl.innerHTML = `<div class="receipt-empty">ยังไม่ได้เลือกชีท</div>`;
   } else {
-    receiptItemsEl.innerHTML = entries.map(([code, item]) => {
-      const s = CONFIG.subjects.find(x => x.code === code);
-      let rows = `<div class="receipt-row"><span class="name">${s.code}</span><span class="amt">${s.price}฿</span></div>`;
+    receiptItemsEl.innerHTML = entries.map(([id, item]) => {
+      const s = CONFIG.subjects.find(x => x.id === id);
+      let rows = `<div class="receipt-row"><span class="name">${s.code}${s.category==='lecture' ? ' (ชีทเรียน)' : ''}</span><span class="amt">${s.price}฿</span></div>`;
       if(item.withAddon){
         rows += `<div class="receipt-row"><span class="name">　+ ${s.addonLabel}</span><span class="amt">${s.addonPrice}฿</span></div>`;
       }
@@ -289,15 +293,24 @@ async function logOrderToSheet(orderId, total, itemsSummary){
 payBtn.addEventListener('click', async () => {
   const total = calcTotal();
   const orderId = makeOrderId();
-  const itemsSummary = Object.entries(cart).map(([code, item]) => {
-    return item.withAddon ? `${code}+ADDON` : code;
+
+  // itemsSummary: ใช้ id (หมวด_รหัสวิชา) ส่งเข้า Sheet/บอท เพื่อแยกชีทสรุป vs ชีทเรียนไม่ให้ชนกัน
+  const itemsSummary = Object.entries(cart).map(([id, item]) => {
+    return item.withAddon ? `${id}+ADDON` : id;
+  }).join(', ');
+
+  // itemsDisplay: ข้อความอ่านง่ายที่ลูกค้าเห็นในแชท LINE (โชว์แค่รหัสวิชา ไม่มี prefix หมวด)
+  const itemsDisplay = Object.entries(cart).map(([id, item]) => {
+    const s = CONFIG.subjects.find(x => x.id === id);
+    const label = s.category === 'lecture' ? `${s.code} (ชีทเรียน)` : s.code;
+    return item.withAddon ? `${label}+${s.addonLabel}` : label;
   }).join(', ');
 
   orderIdDisplay.textContent = orderId;
   qrAmount.textContent = total;
   document.getElementById('bankFallback').textContent = CONFIG.bankInfo;
 
-  const lineMessage = `เลขออเดอร์ ${orderId}\nรายการ: ${itemsSummary}\nยอด: ${total} บาท\n(แนบรูปสลิปในแชทนี้ได้เลยค่ะ)`;
+  const lineMessage = `เลขออเดอร์ ${orderId}\nรายการ: ${itemsDisplay}\nยอด: ${total} บาท\n(แนบรูปสลิปในแชทนี้ได้เลยค่ะ)`;
   lineBtn.href = CONFIG.lineOaId
     ? `https://line.me/R/oaMessage/${encodeURIComponent(CONFIG.lineOaId)}/?${encodeURIComponent(lineMessage)}`
     : CONFIG.lineAddFriendUrl;
