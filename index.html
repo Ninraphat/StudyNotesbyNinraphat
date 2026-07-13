@@ -45,7 +45,7 @@
       <div class="bank-fallback" id="bankFallback"></div>
       <div class="amount-tag">โอน <span id="qrAmount">0</span> บาท</div>
       <div class="hint">1) สแกน QR โอนตามยอด(โปรดตรวจสอบรายการให้ถูกต้องก่อนโอนเงิน ระบบจะส่งชีทตามใบสั่งซื้อเท่านั้น)<br>2) กดปุ่มด้านล่างเพื่อเปิดแชท LINE (มีเลขออเดอร์ใส่ให้แล้ว)<br>3) แนบรูปสลิปส่งในแชทนั้น แล้วรอแอดมินยืนยัน</div>
-      <a class="btn btn-confirm" id="lineBtn" target="_blank" rel="noopener">แจ้งชำระเงินทาง LINE OA</a>
+      <a class="btn btn-confirm" id="lineBtn" target="_blank" rel="noopener">คลิกที่นี่เพื่อแจ้งชำระเงินทาง LINE OA</a>
     </div>
 
     <div class="downloads" id="downloads">
@@ -120,6 +120,14 @@ const CONFIG = {
       previewLink:"https://drive.google.com/file/d/1hMmfIdhV1tAGRbY7q3j2G0LAR1iuQayI/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2601",
       addon:false
+    },
+    {
+      code:"ENG3101", price:29, category:"summary",
+      desc:"สรุปเนื้อหาบทที่ 1-8 + ลิสต์ศัพท์และแกรมม่า + แนวข้อสอบและแบบฝึกหัดคล้ายข้อสอบที่อาจารย์ให้ทำ",
+      previewLink:"https://drive.google.com/file/d/10EP8KI9Oo_9KlcAuo_jwaGJvFnxN2sUT/view?usp=drivesdk",
+      driveLink:"https://drive.google.com/FILE_ID_ENG3101",
+      addon:true, addonPrice:10, addonLabel:"รับ Flashcard Quizlet (คำศัพท์จากทุกบทในหนังสือ + ศัพท์ที่เกี่ยวข้อง)",
+      addonLink:"https://drive.google.com/FILE_ID_ENG2401_EXAM"
     },
 
     { code:"ENL2101", price:49, category:"lecture",
