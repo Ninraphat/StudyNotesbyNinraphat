@@ -68,12 +68,18 @@ const CONFIG = {
   lineAddFriendUrl: "https://lin.ee/niqfKMM",
   lineOaId: "@909derit",
   bankInfo: "SCB ไทยพาณิชย์ 232-2-24173-2\nศิรภัทร์ ชุมสาย ณ อยุธยา",
+  /* ------------------------------------------------------------------
+     ฟิลด์ใหม่ที่เพิ่มได้ในแต่ละวิชา:
+     - topics: [ "หัวข้อ 1", "หัวข้อ 2", ... ]  → โชว์เป็นสารบัญตอนกด "รายละเอียด" (ถ้าไม่ใส่ ปุ่มจะไม่โผล่)
+     - addonPreviewLink: ลิงก์คลิปตัวอย่างของ Addon (ใส่เฉพาะ addon ที่มีคลิปให้ดู)
+  ------------------------------------------------------------------- */
   subjects: [
     {
       code:"ENG2001", price:29, category:"summary",
       desc:"สรุปเนื้อหาทฤษฎีเทคนิคต่างๆ + คำแปลบทความและไฮไลท์ศัพท์ Seen Passage ที่จะออกสอบ + ตัวอย่างและแบบฝึกหัดที่อาจารย์ให้ทำทั้งหมด",
       previewLink:"https://drive.google.com/file/d/1UkOVLTG5SW_FugC0UhmWMNXrBt3ywsfg/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2001",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2", "ใส่หัวข้อที่ 3"],
       addon:false
     },
     {
@@ -81,22 +87,27 @@ const CONFIG = {
       desc:"สรุปเนื้อหาและเทคนิคการอ่านตีความ 5 บท + คำแปลและเฉลยแบบฝึกหัดจาก Seen Passage ที่จะออกสอบทุกบทของเทอมนี้",
       previewLink:"https://drive.google.com/file/d/1_u2dksug7DxIl63vGPt9DpmT2qmByn0H/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2002",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2", "ใส่หัวข้อที่ 3"],
       addon:true, addonPrice:10, addonLabel:"รับ Flashcard Quizlet (คำศัพท์ Seen Passage + Oxford 3000 B1)",
-      addonLink:"https://drive.google.com/FILE_ID_ENG2002_FLASHCARD"
+      addonLink:"https://drive.google.com/FILE_ID_ENG2002_FLASHCARD",
+      addonPreviewLink:""
     },
     {
       code:"ENG2101", price:29, category:"summary",
       desc:"สรุปจากหนังสือ เน้นสิ่งที่อาจารย์สอน ท้ายคาบอาจารย์มักมีโจทย์ให้ฝึก รวบรวมพร้อมคำตอบไว้ท้ายสรุป",
       previewLink:"https://drive.google.com/file/d/1X7w3gIjutSjAWAsW60XYxQCxAqmxC4Kr/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2101",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2", "ใส่หัวข้อที่ 3"],
       addon:true, addonPrice:10, addonLabel:"รับแนวข้อสอบเพิ่มเติม",
-      addonLink:"https://drive.google.com/FILE_ID_ENG2101_EXAM"
+      addonLink:"https://drive.google.com/FILE_ID_ENG2101_EXAM",
+      addonPreviewLink:""
     },
     {
       code:"ENG2102", price:29, category:"summary",
       desc:"แนวข้อสอบที่อาจารย์ให้ทำพร้อมเฉลยและอธิบายข้อถูก + pre-test ก่อนเรียน + แนวข้อเขียนพร้อมตัวอย่าง + Grammar ที่ใช้สอบ",
       previewLink:"https://drive.google.com/file/d/1as-8OteWZjSwpe7wpbzAeooTSYxJydBD/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2102",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2", "ใส่หัวข้อที่ 3"],
       addon:false
     },
     {
@@ -104,6 +115,7 @@ const CONFIG = {
       desc:"เนื้อหาสไลด์อาจารย์ + สรุปจากหนังสือเพิ่มเติม อาจารย์เน้นออกสอบตามสไลด์ เหมาะกับคนไม่ได้เข้าเรียนหรือไม่มีเวลา",
       previewLink:"https://drive.google.com/file/d/1VhwAAnzJ2vy1sifn9FuQEX7gXQa0_gG6/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENL2001",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2", "ใส่หัวข้อที่ 3"],
       addon:false
     },
     {
@@ -111,14 +123,17 @@ const CONFIG = {
       desc:"สรุปเนื้อหาบทที่ 1-9 + แนวและเทคนิคการทำข้อสอบอัตนัย 4 พาร์ท",
       previewLink:"https://drive.google.com/file/d/1f75zbwHli59xlIXCM-VsStEfG-_Ddmme/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2401",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2", "ใส่หัวข้อที่ 3"],
       addon:true, addonPrice:10, addonLabel:"รับแนวข้อสอบ 3 ชุดฝึกทำจริง พร้อมเฉลย อธิบาย แปลทุกข้อ",
-      addonLink:"https://drive.google.com/FILE_ID_ENG2401_EXAM"
+      addonLink:"https://drive.google.com/FILE_ID_ENG2401_EXAM",
+      addonPreviewLink:""
     },
     {
       code:"ENG2601", price:29, category:"summary",
       desc:"สรุปเนื้อหาจากหนังสือ + เอกสารเพิ่มเติมจากอาจารย์ + บทแปลกลอนที่อาจารย์สอน",
       previewLink:"https://drive.google.com/file/d/1hMmfIdhV1tAGRbY7q3j2G0LAR1iuQayI/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2601",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2", "ใส่หัวข้อที่ 3"],
       addon:false
     },
     {
@@ -126,22 +141,30 @@ const CONFIG = {
       desc:"สรุปเนื้อหาบทที่ 1-8 + ลิสต์ศัพท์และไวยากรณ์ + แนวข้อสอบและแบบฝึกหัดคล้ายข้อสอบที่อาจารย์ให้ทำ",
       previewLink:"https://drive.google.com/file/d/10EP8KI9Oo_9KlcAuo_jwaGJvFnxN2sUT/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENG3101",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2", "ใส่หัวข้อที่ 3"],
       addon:true, addonPrice:10, addonLabel:"รับ Flashcard Quizlet (คำศัพท์จากทุกบทในหนังสือ + ศัพท์ที่เกี่ยวข้อง)",
-      addonLink:"https://drive.google.com/FILE_ID_ENG2401_EXAM"
+      addonLink:"https://drive.google.com/FILE_ID_ENG2401_EXAM",
+      addonPreviewLink:""
     },
 
     { code:"ENL2101", price:49, category:"lecture",
       desc:"ชีทเรียนจากใต้ตึกคณะมนุษยศาสตร์",
       previewLink:"https://drive.google.com/file/d/1jXR0zg5nuosv1G8T1B7y-l_AvZxkRyCz/view?usp=drivesdk",
-      driveLink:"https://drive.google.com/FILE_ID_ENL2101_LECTURE", addon:false },
+      driveLink:"https://drive.google.com/FILE_ID_ENL2101_LECTURE",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2"],
+      addon:false },
     { code:"ENS3401" , price:49, category:"lecture",
       desc:"ชีทเรียนจากใต้ตึกคณะมนุษยศาสตร์",
       previewLink:"https://drive.google.com/file/d/1CzsxRHGUec90Z5LNMnFIT-0SNOgk_YA8/view?usp=drivesdk",
-      driveLink:"https://drive.google.com/FILE_ID_ENS3401_LECTURE", addon:false },
+      driveLink:"https://drive.google.com/FILE_ID_ENS3401_LECTURE",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2"],
+      addon:false },
     { code:"ENS4301", price:49, category:"lecture",
       desc:"ชีทเรียนจากใต้ตึกคณะมนุษยศาสตร์",
       previewLink:"https://drive.google.com/file/d/1krrUeMFRPQfASPC21qEHRyMLa3mKvAv7/view?usp=drivesdk",
-      driveLink:"https://drive.google.com/FILE_ID_ENS4301_LECTURE", addon:false },
+      driveLink:"https://drive.google.com/FILE_ID_ENS4301_LECTURE",
+      topics:["ใส่หัวข้อที่ 1", "ใส่หัวข้อที่ 2"],
+      addon:false },
   ]
 };
 
@@ -189,11 +212,19 @@ function renderSubjects(){
       <div class="body">
         <div class="code">${s.code}</div>
         <div class="desc">${s.desc}</div>
-        ${s.previewLink ? `<a class="preview-link" href="${s.previewLink}" target="_blank" rel="noopener">👁️ ดูตัวอย่าง</a>` : ``}
+        <div class="link-row">
+          ${s.previewLink ? `<a class="preview-link" href="${s.previewLink}" target="_blank" rel="noopener">👁️ ดูตัวอย่าง</a>` : ``}
+          ${s.topics && s.topics.length ? `<button type="button" class="details-toggle" data-id="${s.id}">📑 รายละเอียด</button>` : ``}
+        </div>
+        ${s.topics && s.topics.length ? `
+        <ul class="topics-list" id="topics-${s.id}">
+          ${s.topics.map(t => `<li>${t}</li>`).join('')}
+        </ul>` : ``}
         ${s.addon ? `
         <div class="addon" id="addon-${s.id}">
           <input type="checkbox" id="chk-addon-${s.id}">
           <label for="chk-addon-${s.id}">${s.addonLabel} <span class="tag">+${s.addonPrice}฿</span></label>
+          ${s.addonPreviewLink ? `<a class="addon-preview-link" href="${s.addonPreviewLink}" target="_blank" rel="noopener">🎬 ดูตัวอย่าง Addon</a>` : ``}
         </div>` : ``}
       </div>
       <div class="price">${s.price}฿</div>
@@ -204,6 +235,14 @@ function renderSubjects(){
     tab.addEventListener('click', () => {
       activeCategory = tab.dataset.cat;
       renderSubjects();
+    });
+  });
+
+  document.querySelectorAll('.details-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const list = document.getElementById(`topics-${btn.dataset.id}`);
+      const isOpen = list.classList.toggle('show');
+      btn.textContent = isOpen ? '📑 ซ่อนรายละเอียด' : '📑 รายละเอียด';
     });
   });
 
