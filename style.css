@@ -182,13 +182,41 @@
   }
   .preview-link{
     display:inline-block;
-    margin-top:6px;
     font-size:12px;
     color:var(--stamp);
     text-decoration:none;
     font-weight:600;
   }
   .preview-link:hover{text-decoration:underline;}
+  .link-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-top:6px;
+  }
+  .details-toggle{
+    background:none;
+    border:none;
+    padding:0;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:600;
+    color:var(--pen);
+    cursor:pointer;
+  }
+  .details-toggle:hover{text-decoration:underline;}
+  .topics-list{
+    display:none;
+    margin:8px 0 0;
+    padding:10px 14px;
+    background:var(--mint);
+    border-radius:10px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    line-height:1.7;
+  }
+  .topics-list.show{display:block;}
+  .topics-list li{margin-left:16px;}
   .subject .price{
     font-weight:700;
     color:var(--pen);
@@ -201,7 +229,8 @@
     border-top:1px dashed var(--line);
     display:none;
     align-items:center;
-    gap:10px;
+    flex-wrap:wrap;
+    gap:8px 10px;
     font-size:13px;
   }
   .addon.show{display:flex;}
@@ -215,6 +244,15 @@
     padding:2px 7px;
     border-radius:999px;
   }
+  .addon-preview-link{
+    font-size:12px;
+    font-weight:600;
+    color:var(--stamp);
+    text-decoration:none;
+    width:100%;
+    margin-left:30px;
+  }
+  .addon-preview-link:hover{text-decoration:underline;}
 
   /* Receipt / cart */
   .receipt{
