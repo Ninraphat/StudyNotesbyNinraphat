@@ -7,6 +7,32 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+  /* เพิ่มสไตล์สำหรับชื่อวิชา (ไทย/อังกฤษ) และเทอมที่ทำสรุป ใต้รหัสวิชา
+     ถ้าอยากย้ายไปรวมกับ style.css ทีหลังก็ copy บล็อกนี้ไปวางได้เลย */
+  .subject-name{
+    font-size: 12.5px;
+    color: var(--ink-soft, #6B7F91);
+    margin-top: 1px;
+    line-height: 1.4;
+  }
+  .subject-name .name-en{
+    font-style: italic;
+  }
+  .subject-name .name-sep{
+    opacity: 0.5;
+  }
+  .term-tag{
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--pen-dark, #2C6E9C);
+    background: var(--mint, #DCF3EA);
+    padding: 1px 8px;
+    border-radius: 999px;
+    margin-top: 4px;
+  }
+</style>
 </head>
 <body>
 
@@ -76,6 +102,7 @@ const CONFIG = {
   subjects: [
     {
       code:"ENG2001", price:29, category:"summary",
+      nameTh:"การอ่านเอาความภาษาอังกฤษ", nameEn:"English Reading for Comprehension", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"สรุปเนื้อหาทฤษฎีเทคนิคต่างๆ + คำแปลบทความและไฮไลท์ศัพท์ Seen Passage ที่จะออกสอบ + ตัวอย่างและแบบฝึกหัดที่อาจารย์ให้ทำทั้งหมด",
       previewLink:"https://drive.google.com/file/d/1UkOVLTG5SW_FugC0UhmWMNXrBt3ywsfg/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2001",
@@ -84,6 +111,7 @@ const CONFIG = {
     },
     {
       code:"ENG2002", price:29, category:"summary",
+      nameTh:"การอ่านตีความภาษาอังกฤษ", nameEn:"English Interpretative Reading", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"สรุปเนื้อหาและเทคนิคการอ่านตีความ 5 บท + คำแปลและเฉลยแบบฝึกหัดจาก Seen Passage ที่จะออกสอบทุกบทของเทอมนี้",
       previewLink:"https://drive.google.com/file/d/1_u2dksug7DxIl63vGPt9DpmT2qmByn0H/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2002",
@@ -94,6 +122,7 @@ const CONFIG = {
     },
     {
       code:"ENG2101", price:29, category:"summary",
+      nameTh:"การออกเสียงภาษาอังกฤษ", nameEn:"English Pronunciation", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"สรุปจากหนังสือ เน้นสิ่งที่อาจารย์สอน ท้ายคาบอาจารย์มักมีโจทย์ให้ฝึก รวบรวมพร้อมคำตอบไว้ท้ายสรุป",
       previewLink:"https://drive.google.com/file/d/1X7w3gIjutSjAWAsW60XYxQCxAqmxC4Kr/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2101",
@@ -114,6 +143,7 @@ const CONFIG = {
     },
         {
       code:"ENL2003", price:29, category:"summary",
+      nameTh:"ความรู้เบื้องต้นทางสัทศาสตร์และสัทวิทยาภาษาอังกฤษ", nameEn:"Introduction to English Phonetics and Phonology", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"สรุปจากสไลด์ เน้นสิ่งที่อาจารย์สอน รวมข้อยกเว้นต่างๆ ที่ควรจำ พร้อมแบบฝึกหัดในแต่ละบทตามที่อาจารย์ให้ฝึกในคาบ",
       previewLink:"https://drive.google.com/file/d/1COpsAZ3SQRBjwPYXvKUN2M_n-snb4mBh/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENG2101",
@@ -128,6 +158,7 @@ const CONFIG = {
     },
     {
       code:"ENG2102", price:29, category:"summary",
+      nameTh:"การสนทนาภาษาอังกฤษในลักษณะที่กำหนดให้", nameEn:"Controlled Conversations in English", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"แนวข้อสอบที่อาจารย์ให้ทำพร้อมเฉลยและอธิบายข้อถูก + pre-test ก่อนเรียน + แนวข้อเขียนพร้อมตัวอย่าง + Grammar ที่ใช้สอบ",
       previewLink:"https://drive.google.com/file/d/1as-8OteWZjSwpe7wpbzAeooTSYxJydBD/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2102",
@@ -136,6 +167,7 @@ const CONFIG = {
     },
     {
       code:"ENL2001", price:29, category:"summary",
+      nameTh:"ความรู้เบื้องต้นเกี่ยวกับภาษา", nameEn:"Introduction to Language", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"เนื้อหาสไลด์อาจารย์ + สรุปจากหนังสือเพิ่มเติม อาจารย์เน้นออกสอบตามสไลด์ เหมาะกับคนไม่ได้เข้าเรียนหรือไม่มีเวลา",
       previewLink:"https://drive.google.com/file/d/1VhwAAnzJ2vy1sifn9FuQEX7gXQa0_gG6/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENL2001",
@@ -146,6 +178,7 @@ const CONFIG = {
     },
     {
       code:"ENL2101", price:29, category:"summary",
+      nameTh:"โครงสร้างภาษาอังกฤษ", nameEn:"The Structure of English", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"เนื้อหาสไลด์อาจารย์ + สรุปจากหนังสือเพิ่มเติมที่อาจารย์แนะนำ + ตัวอย่างอธิบายประกอบ + แนวข้อสอบ",
       previewLink:"https://drive.google.com/file/d/1jNMjqMQcVcELi_yFVGODcjWNRgpWom2g/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENL2101",
@@ -156,6 +189,7 @@ const CONFIG = {
     },
     {
       code:"ENG2401", price:29, category:"summary",
+      nameTh:"การเขียนประโยคและอนุเฉทภาษาอังกฤษสั้นๆ", nameEn:"English Sentences and Short Paragraphs", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"สรุปเนื้อหาบทที่ 1-9 + แนวและเทคนิคการทำข้อสอบอัตนัย 4 พาร์ท",
       previewLink:"https://drive.google.com/file/d/1f75zbwHli59xlIXCM-VsStEfG-_Ddmme/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2401",
@@ -167,6 +201,7 @@ const CONFIG = {
     },
     {
       code:"ENG2601", price:29, category:"summary",
+      nameTh:"ความรู้เบื้องต้นในเรื่องวรรณคดีอังกฤษและวรรณคดีอเมริกัน", nameEn:"Introduction to English and American Literature", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"สรุปเนื้อหาจากหนังสือ + เอกสารเพิ่มเติมจากอาจารย์ + บทแปลกลอนที่อาจารย์สอน",
       previewLink:"https://drive.google.com/file/d/1hMmfIdhV1tAGRbY7q3j2G0LAR1iuQayI/view?usp=sharing",
       driveLink:"https://drive.google.com/FILE_ID_ENG2601",
@@ -178,6 +213,7 @@ const CONFIG = {
     },
     {
       code:"ENG3101", price:29, category:"summary",
+      nameTh:"การสนทนาภาษาอังกฤษในเรื่องทั่วๆไป", nameEn:"General Conversations in English", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"สรุปเนื้อหาบทที่ 1-8 + ลิสต์ศัพท์และไวยากรณ์ + แนวข้อสอบและแบบฝึกหัดคล้ายข้อสอบที่อาจารย์ให้ทำ",
       previewLink:"https://drive.google.com/file/d/10EP8KI9Oo_9KlcAuo_jwaGJvFnxN2sUT/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENG3101",
@@ -190,6 +226,7 @@ const CONFIG = {
     },
     {
       code:"ENG3201", price:29, category:"summary",
+      nameTh:"การฟังภาษาอังกฤษเพื่อความเข้าใจ 1", nameEn:"English Listening for Comprehension I", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"สรุปเนื้อหาบทที่ 1-9 + เทคนิคการฟังแต่ละรูปแบบในแต่ละบท",
       previewLink:"https://drive.google.com/file/d/1GyVr75_5exBMJKHDZb1FZYN0OLBEm7YB/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENG3201",
@@ -200,6 +237,7 @@ const CONFIG = {
     },
     {
       code:"ENS3302", price:29, category:"summary",
+      nameTh:"การแปลภาษาอังกฤษเบื้องต้น", nameEn:"Introduction to Translation", term:"ใส่เทอมที่ทำสรุป เช่น 1/2568",
       desc:"สรุปเนื้อหาบทที่ 1-15 + ลิสต์ศัพท์ สำนวน สุภาษิตที่ต้องรู้ + แนวข้อสอบและแบบฝึกแปลที่อาจารย์ให้ทำ",
       previewLink:"https://drive.google.com/file/d/1FNoJZmSBlyk-C1QUXPrSJHBjKVqZ8Ore/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENS3302",
@@ -214,6 +252,7 @@ const CONFIG = {
     },
     {
       code:"Oxford(A2)", price:19, category:"summary",
+      nameTh:"ชุดคำศัพท์เสริม (ไม่ใช่วิชาในหลักสูตร)", nameEn:"Vocabulary Set (supplementary, not a course code)", term:"",
       desc:"คำศัพท์ Oxford 3000 ระดับ A2 พร้อม Flashcard สำหรับท่องจำ",
       previewLink:"https://drive.google.com/file/d/1WBQ5v6S8XqiwkIW6v0oTCJJlaR0tehVe/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENG2601",
@@ -223,6 +262,7 @@ const CONFIG = {
     
     {
       code:"Oxford(B1)", price:19, category:"summary",
+      nameTh:"ชุดคำศัพท์เสริม (ไม่ใช่วิชาในหลักสูตร)", nameEn:"Vocabulary Set (supplementary, not a course code)", term:"",
       desc:"คำศัพท์ Oxford 3000 ระดับ B1 พร้อม Flashcard สำหรับท่องจำ",
       previewLink:"https://drive.google.com/file/d/1BcEWI_DVa-RtgBb892TuVtgCSC_jxCy9/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENG2601",
@@ -231,18 +271,21 @@ const CONFIG = {
     },
 
     { code:"ENL2101", price:49, category:"lecture",
+      nameTh:"โครงสร้างภาษาอังกฤษ", nameEn:"The Structure of English", term:"ใส่เทอมที่จด",
       desc:"ชีทเรียนจากใต้ตึกคณะมนุษยศาสตร์",
       previewLink:"https://drive.google.com/file/d/1jXR0zg5nuosv1G8T1B7y-l_AvZxkRyCz/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENL2101_LECTURE",
       topics:[],
       addon:false },
     { code:"ENS3401" , price:49, category:"lecture",
+      nameTh:"ภาษาอังกฤษเพื่อโรงแรม", nameEn:"English for Hotels", term:"ใส่เทอมที่จด",
       desc:"ชีทเรียนจากใต้ตึกคณะมนุษยศาสตร์",
       previewLink:"https://drive.google.com/file/d/1CzsxRHGUec90Z5LNMnFIT-0SNOgk_YA8/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENS3401_LECTURE",
       topics:[],
       addon:false },
     { code:"ENS4301", price:49, category:"lecture",
+      nameTh:"การแปลวรรณกรรมภาษาอังกฤษสำหรับเด็ก", nameEn:"Children's English Literary Work Translation", term:"ใส่เทอมที่จด",
       desc:"ชีทเรียนจากใต้ตึกคณะมนุษยศาสตร์",
       previewLink:"https://drive.google.com/file/d/1krrUeMFRPQfASPC21qEHRyMLa3mKvAv7/view?usp=drivesdk",
       driveLink:"https://drive.google.com/FILE_ID_ENS4301_LECTURE",
@@ -294,6 +337,11 @@ function renderSubjects(){
       <input type="checkbox" class="main-check" id="chk-${s.id}">
       <div class="body">
         <div class="code">${s.code}</div>
+        ${(s.nameTh || s.nameEn) ? `
+        <div class="subject-name">
+          ${s.nameTh ? `${s.nameTh}` : ``}${s.nameTh && s.nameEn ? ` <span class="name-sep">·</span> ` : ``}${s.nameEn ? `<span class="name-en">${s.nameEn}</span>` : ``}
+        </div>` : ``}
+        ${s.term ? `<div class="term-tag">📅 ${s.term}</div>` : ``}
         <div class="desc">${s.desc}</div>
         <div class="link-row">
           ${s.previewLink ? `<a class="preview-link" href="${s.previewLink}" target="_blank" rel="noopener">👁️ ดูตัวอย่าง</a>` : ``}
