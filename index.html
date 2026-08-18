@@ -31,7 +31,64 @@
     padding: 1px 8px;
     border-radius: 999px;
     margin-top: 4px;
+    margin-right: 4px;
   }
+  .email-block{
+    display: none;
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--mint, #DCF3EA);
+    border-radius: 12px;
+  }
+  .email-block.show{ display: block; }
+  .email-block label{
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--pen-dark, #2C6E9C);
+    margin-bottom: 6px;
+  }
+  .email-block input{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(44,62,80,0.18);
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .email-block input.invalid{
+    border-color: #c0392b;
+  }
+  .email-hint{
+    font-size: 11px;
+    color: var(--ink-soft, #6B7F91);
+    margin-top: 5px;
+    line-height: 1.5;
+  }
+  .tiers{
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line, rgba(44,62,80,0.14));
+  }
+  .tiers.show{ display: flex; }
+  .tier-option{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: background .15s ease;
+  }
+  .tier-option:hover{ background: var(--mint, #DCF3EA); }
+  .tier-option input[type=radio]{ accent-color: var(--pen, #3D8FC4); }
+  .tier-label{ flex: 1; color: var(--ink-soft, #6B7F91); }
+  .tier-price{ font-weight: 700; color: var(--pen, #3D8FC4); font-size: 13px; }
 </style>
 </head>
 <body>
@@ -63,6 +120,12 @@
       <span class="num"><span id="totalAmount">0</span> ฿</span>
     </div>
 
+    <div class="email-block" id="emailBlock">
+      <label for="customerEmail">📧 อีเมล Google (สำหรับเข้าดูคลิปติวใน Drive)</label>
+      <input type="email" id="customerEmail" placeholder="youremail@gmail.com">
+      <div class="email-hint">ต้องเป็นอีเมล Google เท่านั้น แอดมินจะเพิ่มสิทธิ์เข้าถึงให้ตามอีเมลนี้</div>
+    </div>
+
     <button class="btn btn-pay" id="payBtn" disabled>ชำระเงิน</button>
 
     <div class="qr-block" id="qrBlock">
@@ -89,7 +152,7 @@
 
 <script>
 const CONFIG = {
-  gasWebAppUrl: "https://script.google.com/macros/s/AKfycby7CDE0Bv6WMkNZ9mQNjam_-_cE4Srp30BkOQAqjDhAsWIsK7sYd7wzBe1JmNkvXg/exec",
+  gasWebAppUrl: "https://script.google.com/macros/s/AKfycbwm1mUmR3OZyoxsyHuS1pJ8i61MCK5L9BD8PXJI_dvnkwbsdXTSJ-vRmt0QsRS2ZWQ/exec",
   qrImageSrc: "qr-placeholder.png",
   lineAddFriendUrl: "https://lin.ee/niqfKMM",
   lineOaId: "@909derit",
@@ -291,6 +354,25 @@ const CONFIG = {
       driveLink:"https://drive.google.com/FILE_ID_ENS4301_LECTURE",
       topics:[],
       addon:false },
+
+    // ---------- คลิปติว (เข้าถึงผ่านอีเมล Google — ต้องแอดอีเมลลูกค้าเข้า Drive เอง) ----------
+    // ฟิลด์ใหม่เฉพาะหมวดนี้:
+    //   duration = ความยาวคลิป เช่น "1 ชม. 20 นาที"
+    //   tiers = ตัวเลือกราคา ให้ลูกค้าเลือกว่าจะซื้อแบบไหน (วิทยุ เลือกได้ทีละอัน)
+    //           tiers[].driveLink = ลิงก์ที่จะส่งให้ลูกค้าตามตัวเลือกที่ซื้อ (ตั้งสิทธิ์ "จำกัดเฉพาะคนที่มีสิทธิ์" ไม่ใช่ anyone-with-link)
+    {
+      code:"ใส่รหัสคลิป", category:"video",
+      nameTh:"ใส่ชื่อวิชาภาษาไทย", nameEn:"ใส่ชื่อวิชาภาษาอังกฤษ", term:"ใส่เทอมที่ติว",
+      desc:"ใส่คำอธิบายคลิปติว เช่น ติวเข้มก่อนสอบ อธิบายละเอียดทีละหัวข้อ พร้อมตัวอย่างข้อสอบ",
+      duration:"ใส่ความยาวคลิป เช่น 1 ชม. 30 นาที",
+      previewLink:"ใส่ลิงก์คลิปตัวอย่างสั้นๆ",
+      tiers:[
+        { label:"คลิปอย่างเดียว", price:79, driveLink:"ใส่ลิงก์ Drive เฉพาะคลิปวิดีโอ" },
+        { label:"คลิปพร้อมชีทติวและสไลด์", price:99, driveLink:"ใส่ลิงก์ Drive คลิป+ชีทติว+สไลด์" }
+      ],
+      topics:[],
+      addon:false
+    },
   ]
 };
 
@@ -311,12 +393,40 @@ const qrAmount = document.getElementById('qrAmount');
 const orderIdDisplay = document.getElementById('orderIdDisplay');
 const lineBtn = document.getElementById('lineBtn');
 const downloadsEl = document.getElementById('downloads');
+const emailBlock = document.getElementById('emailBlock');
+const customerEmailInput = document.getElementById('customerEmail');
 
 qrImg.src = CONFIG.qrImageSrc;
+
+function cartHasVideo(){
+  return Object.keys(cart).some(id => {
+    const s = CONFIG.subjects.find(x => x.id === id);
+    return s && s.category === 'video';
+  });
+}
+
+function isValidEmail(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+}
+
+function updatePayButtonState(){
+  const total = calcTotal();
+  let ok = total > 0;
+  if(cartHasVideo() && !isValidEmail(customerEmailInput.value)){
+    ok = false;
+  }
+  payBtn.disabled = !ok;
+}
+
+customerEmailInput.addEventListener('input', () => {
+  customerEmailInput.classList.remove('invalid');
+  updatePayButtonState();
+});
 
 function renderCategoryTabs(){
   const summaryCount = CONFIG.subjects.filter(s => s.category === "summary").length;
   const lectureCount = CONFIG.subjects.filter(s => s.category === "lecture").length;
+  const videoCount = CONFIG.subjects.filter(s => s.category === "video").length;
   return `
     <div class="cat-tabs">
       <button type="button" class="cat-tab ${activeCategory==='summary' ? 'active' : ''}" data-cat="summary">
@@ -324,6 +434,9 @@ function renderCategoryTabs(){
       </button>
       <button type="button" class="cat-tab ${activeCategory==='lecture' ? 'active' : ''}" data-cat="lecture">
         📖 ชีทเรียน <span class="cat-count">${lectureCount}</span>
+      </button>
+      <button type="button" class="cat-tab ${activeCategory==='video' ? 'active' : ''}" data-cat="video">
+        🎬 คลิปติว <span class="cat-count">${videoCount}</span>
       </button>
     </div>
   `;
@@ -342,6 +455,7 @@ function renderSubjects(){
           ${s.nameTh ? `${s.nameTh}` : ``}${s.nameTh && s.nameEn ? ` <span class="name-sep">·</span> ` : ``}${s.nameEn ? `<span class="name-en">${s.nameEn}</span>` : ``}
         </div>` : ``}
         ${s.term ? `<div class="term-tag">📅 ${s.term}</div>` : ``}
+        ${s.duration ? `<div class="term-tag">⏱ ${s.duration}</div>` : ``}
         <div class="desc">${s.desc}</div>
         <div class="link-row">
           ${s.previewLink ? `<a class="preview-link" href="${s.previewLink}" target="_blank" rel="noopener">👁️ ดูตัวอย่าง</a>` : ``}
@@ -351,6 +465,15 @@ function renderSubjects(){
         <ul class="topics-list" id="topics-${s.id}">
           ${s.topics.map(t => `<li>${t}</li>`).join('')}
         </ul>` : ``}
+        ${s.tiers ? `
+        <div class="tiers" id="tiers-${s.id}">
+          ${s.tiers.map((t, i) => `
+          <label class="tier-option">
+            <input type="radio" name="tier-${s.id}" value="${i}" ${i===0 ? 'checked' : ''}>
+            <span class="tier-label">${t.label}</span>
+            <span class="tier-price">${t.price}฿</span>
+          </label>`).join('')}
+        </div>` : ``}
         ${s.addon ? `
         <div class="addon" id="addon-${s.id}">
           <input type="checkbox" id="chk-addon-${s.id}">
@@ -358,7 +481,7 @@ function renderSubjects(){
           ${s.addonPreviewLink ? `<a class="addon-preview-link" href="${s.addonPreviewLink}" target="_blank" rel="noopener">🎬 ดูตัวอย่าง Addon</a>` : ``}
         </div>` : ``}
       </div>
-      <div class="price">${s.price}฿</div>
+      <div class="price">${s.tiers ? `จาก ${Math.min(...s.tiers.map(t => t.price))}฿` : `${s.price}฿`}</div>
     </div>
   `).join('');
 
@@ -382,13 +505,17 @@ function renderSubjects(){
     mainChk.checked = !!cart[s.id];
     mainChk.addEventListener('change', () => {
       if(mainChk.checked){
-        cart[s.id] = { withAddon:false };
+        cart[s.id] = { withAddon:false, tierIndex: 0 };
         if(s.addon) document.getElementById(`addon-${s.id}`).classList.add('show');
+        if(s.tiers) document.getElementById(`tiers-${s.id}`).classList.add('show');
       } else {
         delete cart[s.id];
         if(s.addon){
           document.getElementById(`addon-${s.id}`).classList.remove('show');
           document.getElementById(`chk-addon-${s.id}`).checked = false;
+        }
+        if(s.tiers){
+          document.getElementById(`tiers-${s.id}`).classList.remove('show');
         }
       }
       resetPaymentState();
@@ -406,6 +533,21 @@ function renderSubjects(){
         renderReceipt();
       });
     }
+    if(s.tiers){
+      const tierRadios = document.querySelectorAll(`input[name="tier-${s.id}"]`);
+      if(cart[s.id]){
+        document.getElementById(`tiers-${s.id}`).classList.add('show');
+        const idx = cart[s.id].tierIndex || 0;
+        tierRadios.forEach(r => { r.checked = (Number(r.value) === idx); });
+      }
+      tierRadios.forEach(r => {
+        r.addEventListener('change', () => {
+          if(cart[s.id]) cart[s.id].tierIndex = Number(r.value);
+          resetPaymentState();
+          renderReceipt();
+        });
+      });
+    }
   });
 }
 
@@ -413,7 +555,7 @@ function calcTotal(){
   let total = 0;
   Object.entries(cart).forEach(([id, item]) => {
     const s = CONFIG.subjects.find(x => x.id === id);
-    total += s.price;
+    total += s.tiers ? s.tiers[item.tierIndex || 0].price : s.price;
     if(item.withAddon) total += s.addonPrice;
   });
   return total;
@@ -426,7 +568,10 @@ function renderReceipt(){
   } else {
     receiptItemsEl.innerHTML = entries.map(([id, item]) => {
       const s = CONFIG.subjects.find(x => x.id === id);
-      let rows = `<div class="receipt-row"><span class="name">${s.code}${s.category==='lecture' ? ' (ชีทเรียน)' : ''}</span><span class="amt">${s.price}฿</span></div>`;
+      const catLabel = s.category === 'lecture' ? ' (ชีทเรียน)' : s.category === 'video' ? ' (คลิปติว)' : '';
+      const itemPrice = s.tiers ? s.tiers[item.tierIndex || 0].price : s.price;
+      const tierLabel = s.tiers ? ` — ${s.tiers[item.tierIndex || 0].label}` : '';
+      let rows = `<div class="receipt-row"><span class="name">${s.code}${catLabel}${tierLabel}</span><span class="amt">${itemPrice}฿</span></div>`;
       if(item.withAddon){
         rows += `<div class="receipt-row"><span class="name">　+ ${s.addonLabel}</span><span class="amt">${s.addonPrice}฿</span></div>`;
       }
@@ -435,7 +580,13 @@ function renderReceipt(){
   }
   const total = calcTotal();
   totalAmountEl.textContent = total;
-  payBtn.disabled = total === 0;
+
+  if(cartHasVideo()){
+    emailBlock.classList.add('show');
+  } else {
+    emailBlock.classList.remove('show');
+  }
+  updatePayButtonState();
 }
 
 function resetPaymentState(){
@@ -455,13 +606,13 @@ function makeOrderId(){
   return `ORDER${stamp}${rand}`;
 }
 
-async function logOrderToSheet(orderId, total, itemsSummary){
+async function logOrderToSheet(orderId, total, itemsSummary, email){
   try{
     await fetch(CONFIG.gasWebAppUrl, {
       method: 'POST',
       mode: 'no-cors',
       headers: {'Content-Type':'text/plain'},
-      body: JSON.stringify({ action:'create_order', orderId, total, items:itemsSummary })
+      body: JSON.stringify({ action:'create_order', orderId, total, items:itemsSummary, email: email || '' })
     });
   }catch(err){
     console.error('บันทึกออเดอร์ไม่สำเร็จ (ไม่กระทบลูกค้า แต่แอดมินควรเช็ค):', err);
@@ -470,17 +621,30 @@ async function logOrderToSheet(orderId, total, itemsSummary){
 
 payBtn.addEventListener('click', async () => {
   const total = calcTotal();
+  const hasVideo = cartHasVideo();
+  const email = customerEmailInput.value.trim();
+
+  if(hasVideo && !isValidEmail(email)){
+    customerEmailInput.classList.add('invalid');
+    customerEmailInput.focus();
+    return;
+  }
+
   const orderId = makeOrderId();
 
-  // itemsSummary: ใช้ id (หมวด_รหัสวิชา) ส่งเข้า Sheet/บอท เพื่อแยกชีทสรุป vs ชีทเรียนไม่ให้ชนกัน
+  // itemsSummary: ใช้ id (หมวด_รหัสวิชา) ส่งเข้า Sheet/บอท เพื่อแยกชีทสรุป vs ชีทเรียน vs คลิปติวไม่ให้ชนกัน
+  // ถ้ามี tiers (คลิปติว) จะแนบ :T0 / :T1 ต่อท้าย id บอกว่าลูกค้าเลือกตัวเลือกไหน
   const itemsSummary = Object.entries(cart).map(([id, item]) => {
-    return item.withAddon ? `${id}+ADDON` : id;
+    const s = CONFIG.subjects.find(x => x.id === id);
+    const tierTag = s.tiers ? `:T${item.tierIndex || 0}` : '';
+    return item.withAddon ? `${id}${tierTag}+ADDON` : `${id}${tierTag}`;
   }).join(', ');
 
   // itemsDisplay: ข้อความอ่านง่ายที่ลูกค้าเห็นในแชท LINE (โชว์แค่รหัสวิชา ไม่มี prefix หมวด)
   const itemsDisplay = Object.entries(cart).map(([id, item]) => {
     const s = CONFIG.subjects.find(x => x.id === id);
-    const label = s.category === 'lecture' ? `${s.code} (ชีทเรียน)` : s.code;
+    let label = s.category === 'lecture' ? `${s.code} (ชีทเรียน)` : s.category === 'video' ? `${s.code} (คลิปติว)` : s.code;
+    if(s.tiers) label += ` [${s.tiers[item.tierIndex || 0].label}]`;
     return item.withAddon ? `${label}+${s.addonLabel}` : label;
   }).join(', ');
 
@@ -488,7 +652,8 @@ payBtn.addEventListener('click', async () => {
   qrAmount.textContent = total;
   document.getElementById('bankFallback').textContent = CONFIG.bankInfo;
 
-  const lineMessage = `เลขออเดอร์ ${orderId}\nรายการ: ${itemsDisplay}\nยอด: ${total} บาท\n(แนบรูปสลิปในแชทนี้ได้เลยค่ะ)`;
+  const emailLine = hasVideo ? `\nอีเมล Google (ขอสิทธิ์เข้าดูคลิป): ${email}` : '';
+  const lineMessage = `เลขออเดอร์ ${orderId}\nรายการ: ${itemsDisplay}\nยอด: ${total} บาท${emailLine}\n(แนบรูปสลิปในแชทนี้ได้เลยค่ะ)`;
   lineBtn.href = CONFIG.lineOaId
     ? `https://line.me/R/oaMessage/${encodeURIComponent(CONFIG.lineOaId)}/?${encodeURIComponent(lineMessage)}`
     : CONFIG.lineAddFriendUrl;
@@ -497,7 +662,7 @@ payBtn.addEventListener('click', async () => {
   downloadsEl.classList.remove('show');
   qrBlock.scrollIntoView({behavior:'smooth', block:'nearest'});
 
-  logOrderToSheet(orderId, total, itemsSummary);
+  logOrderToSheet(orderId, total, itemsSummary, email);
 });
 
 lineBtn.addEventListener('click', () => {
