@@ -392,35 +392,6 @@ const CONFIG = {
       addon:false
     },
 
-    { code:"ENL2101", price:49, category:"lecture",
-      nameTh:"โครงสร้างภาษาอังกฤษ", nameEn:"The Structure of English",
-      desc:"ชีทเรียนจากใต้ตึกคณะมนุษยศาสตร์",
-      previewLink:"https://drive.google.com/file/d/1jXR0zg5nuosv1G8T1B7y-l_AvZxkRyCz/view?usp=drivesdk",
-      driveLink:"https://drive.google.com/FILE_ID_ENL2101_LECTURE",
-      topics:[],
-      addon:false },
-    { code:"ENS3401" , price:49, category:"lecture",
-      nameTh:"ภาษาอังกฤษเพื่อโรงแรม", nameEn:"English for Hotels",
-      desc:"ชีทเรียนจากใต้ตึกคณะมนุษยศาสตร์",
-      previewLink:"https://drive.google.com/file/d/1CzsxRHGUec90Z5LNMnFIT-0SNOgk_YA8/view?usp=drivesdk",
-      driveLink:"https://drive.google.com/FILE_ID_ENS3401_LECTURE",
-      topics:[],
-      addon:false },
-    { code:"ENS4301", price:49, category:"lecture",
-      nameTh:"การแปลวรรณกรรมภาษาอังกฤษสำหรับเด็ก", nameEn:"Children's English Literary Work Translation",
-      desc:"ชีทเรียนจากใต้ตึกคณะมนุษยศาสตร์",
-      previewLink:"https://drive.google.com/file/d/1krrUeMFRPQfASPC21qEHRyMLa3mKvAv7/view?usp=drivesdk",
-      driveLink:"https://drive.google.com/FILE_ID_ENS4301_LECTURE",
-      topics:[],
-      addon:false },
-    { code:"ENS4302", price:49, category:"lecture",
-      nameTh:"การแปลข่าวและสารคดีภาษาอังกฤษ", nameEn:"English News and Documentary Translation",
-      desc:"ชีทเรียนจากใต้ตึกคณะมนุษยศาสตร์",
-      previewLink:"https://drive.google.com/file/d/1h8kgQhUnfxlPrQaKIqoqPYSXcKTOHeid/view?usp=drivesdk",
-      driveLink:"https://drive.google.com/FILE_ID_ENS4301_LECTURE",
-      topics:[],
-      addon:false },
-
     // ---------- คลิปติว (เข้าถึงผ่านอีเมล Google — ต้องแอดอีเมลลูกค้าเข้า Drive เอง) ----------
     // ฟิลด์ใหม่เฉพาะหมวดนี้:
     //   duration = ความยาวคลิป เช่น "1 ชม. 20 นาที"
@@ -497,9 +468,6 @@ function renderCategoryTabs(){
     <div class="cat-tabs">
       <button type="button" class="cat-tab ${activeCategory==='summary' ? 'active' : ''}" data-cat="summary">
         📚 ชีทสรุป <span class="cat-count">${summaryCount}</span>
-      </button>
-      <button type="button" class="cat-tab ${activeCategory==='lecture' ? 'active' : ''}" data-cat="lecture">
-        📖 ชีทเรียน <span class="cat-count">${lectureCount}</span>
       </button>
       <button type="button" class="cat-tab ${activeCategory==='video' ? 'active' : ''}" data-cat="video">
         🎬 คลิปติว <span class="cat-count">${videoCount}</span>
@@ -634,7 +602,7 @@ function renderReceipt(){
   } else {
     receiptItemsEl.innerHTML = entries.map(([id, item]) => {
       const s = CONFIG.subjects.find(x => x.id === id);
-      const catLabel = s.category === 'lecture' ? ' (ชีทเรียน)' : s.category === 'video' ? ' (คลิปติว)' : '';
+      const catLabel = s.category === 'video' ? ' (คลิปติว)' : '';
       const itemPrice = s.tiers ? s.tiers[item.tierIndex || 0].price : s.price;
       const tierLabel = s.tiers ? ` — ${s.tiers[item.tierIndex || 0].label}` : '';
       let rows = `<div class="receipt-row"><span class="name">${s.code}${catLabel}${tierLabel}</span><span class="amt">${itemPrice}฿</span></div>`;
@@ -709,7 +677,7 @@ payBtn.addEventListener('click', async () => {
   // itemsDisplay: ข้อความอ่านง่ายที่ลูกค้าเห็นในแชท LINE (โชว์แค่รหัสวิชา ไม่มี prefix หมวด)
   const itemsDisplay = Object.entries(cart).map(([id, item]) => {
     const s = CONFIG.subjects.find(x => x.id === id);
-    let label = s.category === 'lecture' ? `${s.code} (ชีทเรียน)` : s.category === 'video' ? `${s.code} (คลิปติว)` : s.code;
+    let label = s.category === 'video' ? `${s.code} (คลิปติว)` : s.code;
     if(s.tiers) label += ` [${s.tiers[item.tierIndex || 0].label}]`;
     return item.withAddon ? `${label}+${s.addonLabel}` : label;
   }).join(', ');
